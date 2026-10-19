@@ -12,6 +12,7 @@ target/
 .idea/libraries/
 *.iws
 *.iml
+*.db
 *.ipr
 .smarttomcat
 ### Eclipse ###
