@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS ExchangeRates
     base_currency_id   INT REFERENCES Currencies (id),
     target_currency_id INT REFERENCES Currencies (id),
     rate             DECIMAL(6)
-)
+);
 
 
