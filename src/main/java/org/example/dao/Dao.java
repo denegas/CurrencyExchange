@@ -8,9 +8,5 @@ public interface Dao<T> {
 
     boolean insert(T t) throws SQLException;
 
-    boolean update(T t) throws SQLException;
-
-    boolean delete(T t) throws SQLException;
-
 
 }
