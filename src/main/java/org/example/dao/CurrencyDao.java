@@ -1,6 +1,7 @@
 package org.example.dao;
 
-import org.example.dto.CurrencyDto;
+
+import org.example.entity.Currency;
 import org.example.utils.DbWork;
 
 import java.sql.*;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDao implements Dao<CurrencyDto> {
+public class CurrencyDao implements Dao<Currency> {
     private static final String GET_BY_CODE_QUERY = """
              SELECT code, full_name, sign
              FROM Currencies
@@ -28,7 +29,7 @@ public class CurrencyDao implements Dao<CurrencyDto> {
     }
 
     @Override
-    public List<CurrencyDto> getAll() {
+    public List<Currency> getAll() {
         try (Connection connection = connect();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_QUERY)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -39,7 +40,7 @@ public class CurrencyDao implements Dao<CurrencyDto> {
         }
     }
 
-    public Optional<CurrencyDto> getByCode(String code) {
+    public Optional<Currency> getByCode(String code) {
 
         try (Connection connection = connect()) {
             PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY);
@@ -54,10 +55,10 @@ public class CurrencyDao implements Dao<CurrencyDto> {
     }
 
     @Override
-    public boolean insert(CurrencyDto currencyDto) {
+    public boolean insert(Currency currency) {
         try (Connection connection = connect();
              PreparedStatement ps = connection.prepareStatement(INSERT_QUERY)) {
-            DbWork.setPreparedStatementParameters(ps, currencyDto.code(), currencyDto.fullName(), currencyDto.sign());
+            DbWork.setPreparedStatementParameters(ps, currency.code(), currency.fullName(), currency.sign());
             // isChanged
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -78,11 +79,11 @@ public class CurrencyDao implements Dao<CurrencyDto> {
 
     }
 
-    private Optional<CurrencyDto> getCurrencyFromResultSet(ResultSet resultSet) {
+    private Optional<Currency> getCurrencyFromResultSet(ResultSet resultSet) {
 
         try {
             if (resultSet.next()) {
-                CurrencyDto currency = new CurrencyDto(resultSet.getString("code"),
+                Currency currency = new Currency(resultSet.getString("code"),
                         resultSet.getString("full_name"),
                         resultSet.getString("sign"));
                 return Optional.of(currency);
@@ -93,12 +94,12 @@ public class CurrencyDao implements Dao<CurrencyDto> {
         return Optional.empty();
     }
 
-    private List<CurrencyDto> getCurrenciesFromResultSet(ResultSet resultSet) {
-        List<CurrencyDto> currencies = new ArrayList<>();
+    private List<Currency> getCurrenciesFromResultSet(ResultSet resultSet) {
+        List<Currency> currencies = new ArrayList<>();
 
         try {
             while (resultSet.next()) {
-                CurrencyDto currency = new CurrencyDto(resultSet.getString("code"),
+                Currency currency = new Currency(resultSet.getString("code"),
                         resultSet.getString("full_name"),
                         resultSet.getString("sign"));
                 currencies.add(currency);
