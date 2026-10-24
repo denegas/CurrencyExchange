@@ -1,4 +1,4 @@
-package org.example.utils;
+package com.github.denegas.utils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

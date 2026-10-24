@@ -1,8 +1,8 @@
-package org.example.dao;
+package com.github.denegas.dao;
 
 
-import org.example.entity.Currency;
-import org.example.utils.DbWork;
+import com.github.denegas.entity.Currency;
+import com.github.denegas.utils.DbWork;
 
 import java.sql.*;
 import java.util.ArrayList;

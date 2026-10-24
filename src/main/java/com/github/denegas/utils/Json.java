@@ -1,10 +1,10 @@
-package org.example.utils;
+package com.github.denegas.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.dto.CurrencyDto;
+import com.github.denegas.dto.CurrencyDto;
 import java.io.IOException;
 
 public final class Json {

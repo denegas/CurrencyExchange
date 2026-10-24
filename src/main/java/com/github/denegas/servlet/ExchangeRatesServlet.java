@@ -1,4 +1,4 @@
-package org.example.servlets;
+package com.github.denegas.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/currencies")
-public class CurrenciesServlet extends HttpServlet {
+@WebServlet("/exchangeRates")
+public class ExchangeRatesServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();

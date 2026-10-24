@@ -1,4 +1,4 @@
-package org.example.dao;
+package com.github.denegas.dao;
 
 import java.sql.SQLException;
 import java.util.List;
