@@ -14,14 +14,14 @@ public final class Json {
 
     }
 
-    public void writeJson(HttpServletResponse response, int statusCode, Object body) throws IOException {
+    public static void writeJson(HttpServletResponse response, int statusCode, Object body) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(statusCode);
         MAPPER.writeValue(response.getWriter(), body);
     }
 
-    public CurrencyDto readCurrency(HttpServletRequest request) throws JsonProcessingException, IOException {
+    public static CurrencyDto readCurrency(HttpServletRequest request) throws JsonProcessingException, IOException {
        return MAPPER.readValue(request.getInputStream(), CurrencyDto.class);
     }
 
