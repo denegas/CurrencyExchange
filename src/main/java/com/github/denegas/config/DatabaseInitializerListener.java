@@ -16,7 +16,7 @@ import java.sql.Statement;
 
 @WebListener
 public class DatabaseInitializerListener implements ServletContextListener {
-    private final static String URL = "jdbc:sqlite:" + System.getProperty("user.home") + "/Database.db?foreign_keys=true";
+    public final static String DB_URL = "jdbc:sqlite:" + System.getProperty("user.home") + "/Database.db?foreign_keys=true";
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -57,7 +57,7 @@ public class DatabaseInitializerListener implements ServletContextListener {
     }
 
     private void executeQueries(String[] queries) {
-        try (Connection connection = DriverManager.getConnection(URL)) {
+        try (Connection connection = DriverManager.getConnection(DB_URL)) {
 
             for (String query : queries) {
                 try (Statement statement = connection.createStatement()) {
