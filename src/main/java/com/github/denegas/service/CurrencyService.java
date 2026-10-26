@@ -31,7 +31,7 @@ public class CurrencyService {
 
     public Currency findByCode(String code) {
         if (!Validator.isValidCurrencyCode(code)) {
-            throw new InvalidCurrencyCodeException("cannot find invalid code!");
+            throw new InvalidCurrencyException("invalid currency's code!");
         }
         Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
