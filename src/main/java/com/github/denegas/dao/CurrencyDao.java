@@ -3,6 +3,7 @@ package com.github.denegas.dao;
 
 import com.github.denegas.entity.Currency;
 import com.github.denegas.exception.AlreadyExistsException;
+import com.github.denegas.exception.DbException;
 import com.github.denegas.utils.DbWork;
 
 import java.sql.*;
@@ -37,7 +38,7 @@ public class CurrencyDao implements Dao<Currency> {
 
             return getCurrenciesFromResultSet(resultSet);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while getAll()", e);
         }
     }
 
@@ -51,7 +52,7 @@ public class CurrencyDao implements Dao<Currency> {
             return getCurrencyFromResultSet(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while finding currency", e);
         }
     }
 
@@ -72,7 +73,7 @@ public class CurrencyDao implements Dao<Currency> {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while inserting currency", e);
         }
     }
 
@@ -86,9 +87,9 @@ public class CurrencyDao implements Dao<Currency> {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("driver is not found", e);
+            throw new DbException("driver is not found", e);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while connecting", e);
         }
 
     }
@@ -99,9 +100,9 @@ public class CurrencyDao implements Dao<Currency> {
                 return generatedKeys.getLong(1);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while getting currency's id", e);
         }
-        throw new RuntimeException("couldn't create currency");
+        throw new DbException("couldn't create currency");
     }
 
     private Optional<Currency> getCurrencyFromResultSet(ResultSet resultSet) {
@@ -117,7 +118,7 @@ public class CurrencyDao implements Dao<Currency> {
                 return Optional.of(currency);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while getting currency",e);
         }
         return Optional.empty();
     }
@@ -137,7 +138,7 @@ public class CurrencyDao implements Dao<Currency> {
             }
             return currencies;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DbException("error while getting currencies",e);
         }
 
 
