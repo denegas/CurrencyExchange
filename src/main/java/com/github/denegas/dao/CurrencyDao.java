@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class CurrencyDao implements Dao<Currency> {
     private static final String GET_BY_CODE_QUERY = """
-             SELECT code, full_name, sign
+             SELECT id, code, full_name, sign
              FROM Currencies
              WHERE code = ?;
             """;
