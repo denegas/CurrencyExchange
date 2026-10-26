@@ -13,7 +13,7 @@ public final class DbWork {
         }
         for (int i = 0; i < params.length; i++) {
             try {
-                ps.setString(i + 1, params[0]);
+                ps.setString(i + 1, params[i]);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -25,7 +25,7 @@ public final class DbWork {
         }
         for (int i = 0; i < params.length; i++) {
             try {
-                ps.setInt(i + 1, params[0]);
+                ps.setInt(i + 1, params[i]);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

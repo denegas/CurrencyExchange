@@ -4,6 +4,7 @@ import com.github.denegas.entity.Currency;
 
 public final class Validator {
     private static final int CURRENCY_CODE_LENGTH = 3;
+
     private Validator() {
     }
 
@@ -13,6 +14,9 @@ public final class Validator {
     }
 
     public static boolean isValidCurrencyCode(String code) {
+        if (code == null) {
+            return false;
+        }
         return code.length() == CURRENCY_CODE_LENGTH && code.equals(code.toUpperCase());
     }
 }

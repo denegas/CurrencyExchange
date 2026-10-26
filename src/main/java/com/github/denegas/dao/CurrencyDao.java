@@ -2,6 +2,7 @@ package com.github.denegas.dao;
 
 
 import com.github.denegas.entity.Currency;
+import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.utils.DbWork;
 
 import java.sql.*;
@@ -40,7 +41,7 @@ public class CurrencyDao implements Dao<Currency> {
         }
     }
 
-    public Optional<Currency> getByCode(String code) {
+    public Optional<Currency> findByCode(String code) {
 
         try (Connection connection = connect()) {
             PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY);
@@ -55,17 +56,30 @@ public class CurrencyDao implements Dao<Currency> {
     }
 
     @Override
-    public boolean insert(Currency currency) {
+    public Currency insert(Currency currency) {
+        if (existsByCode(currency.getCode())) {
+            throw new AlreadyExistsException("creating currency already exists");
+        }
         try (Connection connection = connect();
-             PreparedStatement ps = connection.prepareStatement(INSERT_QUERY)) {
-            DbWork.setPreparedStatementParameters(ps, currency.code(), currency.fullName(), currency.sign());
-            // isChanged
-            return ps.executeUpdate() > 0;
+             PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+
+            DbWork.setPreparedStatementParameters(ps, currency.getCode(), currency.getFullName(), currency.getSign());
+            ps.executeUpdate();
+            try (ResultSet resultSet = ps.getGeneratedKeys()) {
+                long id = getCreatedCurrencyId(resultSet);
+
+                return new Currency(id, currency.getCode(), currency.getFullName(), currency.getSign());
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
+    public boolean existsByCode(String code) {
+        return findByCode(code).isPresent();
+    }
+
 
     private Connection connect() {
         try {
@@ -79,13 +93,27 @@ public class CurrencyDao implements Dao<Currency> {
 
     }
 
+    private long getCreatedCurrencyId(ResultSet generatedKeys) {
+        try {
+            if (generatedKeys.next()) {
+                return generatedKeys.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        throw new RuntimeException("couldn't create currency");
+    }
+
     private Optional<Currency> getCurrencyFromResultSet(ResultSet resultSet) {
 
         try {
             if (resultSet.next()) {
-                Currency currency = new Currency(resultSet.getString("code"),
+                Currency currency = new Currency(
+                        resultSet.getLong(1),
+                        resultSet.getString("code"),
                         resultSet.getString("full_name"),
                         resultSet.getString("sign"));
+
                 return Optional.of(currency);
             }
         } catch (SQLException e) {
@@ -99,7 +127,9 @@ public class CurrencyDao implements Dao<Currency> {
 
         try {
             while (resultSet.next()) {
-                Currency currency = new Currency(resultSet.getString("code"),
+                Currency currency = new Currency(
+                        resultSet.getLong(1),
+                        resultSet.getString("code"),
                         resultSet.getString("full_name"),
                         resultSet.getString("sign"));
                 currencies.add(currency);
