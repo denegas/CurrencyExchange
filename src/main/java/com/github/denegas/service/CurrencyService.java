@@ -29,7 +29,7 @@ public class CurrencyService {
 
     }
 
-    public Currency findByCode(String code) {
+    public CurrencyDto findByCode(String code) {
         if (!Validator.isValidCurrencyCode(code)) {
             throw new InvalidCurrencyException("invalid currency's code!");
         }
@@ -37,7 +37,8 @@ public class CurrencyService {
         if (optionalCurrency.isEmpty()) {
             throw new NotFoundException("couldn't find currency with code: " + code);
         }
-        return optionalCurrency.get();
+        Currency currency = optionalCurrency.get();
+        return currencyMapper.toDto(currency);
 
     }
 
