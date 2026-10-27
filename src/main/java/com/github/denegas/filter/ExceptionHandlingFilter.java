@@ -1,4 +1,4 @@
-package com.github.denegas;
+package com.github.denegas.filter;
 
 import com.github.denegas.exception.*;
 import com.github.denegas.utils.Json;
