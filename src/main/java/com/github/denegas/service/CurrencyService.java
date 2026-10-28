@@ -1,7 +1,8 @@
 package com.github.denegas.service;
 
 import com.github.denegas.dao.CurrencyDao;
-import com.github.denegas.dto.CurrencyDto;
+import com.github.denegas.dto.CurrencyRequestDto;
+import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.exception.*;
 import com.github.denegas.mapper.CurrencyMapper;
@@ -19,8 +20,8 @@ public class CurrencyService {
         this.currencyMapper = currencyMapper;
     }
 
-    public CurrencyDto insert(CurrencyDto currencyDto) {
-        Currency currency = currencyMapper.toEntity(currencyDto);
+    public CurrencyResponseDto insert(CurrencyRequestDto currencyRequestDto) {
+        Currency currency = currencyMapper.toEntity(currencyRequestDto);
         if (!Validator.isValidCurrency(currency)) {
             throw new InvalidCurrencyException("invalid currency to create");
         }
@@ -29,7 +30,7 @@ public class CurrencyService {
 
     }
 
-    public CurrencyDto findByCode(String code) {
+    public CurrencyResponseDto findByCode(String code) {
         if (!Validator.isValidCurrencyCode(code)) {
             throw new InvalidCurrencyException("invalid currency's code!");
         }
@@ -42,7 +43,7 @@ public class CurrencyService {
 
     }
 
-    public List<CurrencyDto> getAll() {
+    public List<CurrencyResponseDto> getAll() {
         List<Currency> currencies = currencyDao.getAll();
         if (currencies.isEmpty()) {
             throw new NothingThereException("couldn't find any currency");

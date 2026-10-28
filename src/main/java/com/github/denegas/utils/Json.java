@@ -2,9 +2,9 @@ package com.github.denegas.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.denegas.dto.CurrencyRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.github.denegas.dto.CurrencyDto;
 import java.io.IOException;
 
 public final class Json {
@@ -21,8 +21,8 @@ public final class Json {
         MAPPER.writeValue(response.getWriter(), body);
     }
 
-    public static CurrencyDto readCurrency(HttpServletRequest request) throws JsonProcessingException, IOException {
-       return MAPPER.readValue(request.getInputStream(), CurrencyDto.class);
+    public static CurrencyRequestDto readCurrency(HttpServletRequest request) throws JsonProcessingException, IOException {
+       return MAPPER.readValue(request.getInputStream(), CurrencyRequestDto.class);
     }
 
 

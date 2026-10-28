@@ -1,6 +1,8 @@
 package com.github.denegas.servlet;
 
-import com.github.denegas.dto.CurrencyDto;
+
+import com.github.denegas.dto.CurrencyRequestDto;
+import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.utils.Json;
 import jakarta.servlet.ServletException;
@@ -26,17 +28,17 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<CurrencyDto> currencyDtoList = service.getAll();
-        Json.writeJson(resp, HttpServletResponse.SC_OK, currencyDtoList);
+        List<CurrencyResponseDto> currencyResponseDtos = service.getAll();
+        Json.writeJson(resp, HttpServletResponse.SC_OK, currencyResponseDtos);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        CurrencyDto creatingCurrency = new CurrencyDto(req.getParameter("code"),
+        CurrencyRequestDto creatingCurrency = new CurrencyRequestDto(req.getParameter("code"),
                 req.getParameter("fullName"),
                 req.getParameter("sign"));
-        CurrencyDto createdCurrency = service.insert(creatingCurrency);
+        CurrencyResponseDto createdCurrency = service.insert(creatingCurrency);
         Json.writeJson(resp, HttpServletResponse.SC_CREATED, createdCurrency);
     }
 }

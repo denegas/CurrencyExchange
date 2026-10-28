@@ -1,6 +1,7 @@
 package com.github.denegas.servlet;
 
-import com.github.denegas.dto.CurrencyDto;
+
+import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.utils.Json;
 import com.github.denegas.utils.Validator;
@@ -27,8 +28,9 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String validCode = getCurrencyCodeFromPath(req);
-        CurrencyDto currencyDto = service.findByCode(validCode);
-        Json.writeJson(resp, HttpServletResponse.SC_OK, currencyDto);
+       // CurrencyDto currencyDto = service.findByCode(validCode);
+        CurrencyResponseDto currencyResponseDto = service.findByCode(validCode);
+        Json.writeJson(resp, HttpServletResponse.SC_OK, currencyResponseDto);
     }
 
     private String getCurrencyCodeFromPath(HttpServletRequest request) {

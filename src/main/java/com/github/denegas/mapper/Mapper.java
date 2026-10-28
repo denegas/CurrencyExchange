@@ -1,6 +1,9 @@
 package com.github.denegas.mapper;
 
-public interface Mapper<D, E> {
-    D toDto(E entity);
-    E toEntity(D dto);
+public interface Mapper<ReqDto, RespDto, Entity> {
+    RespDto toDto(Entity entity);
+
+    Entity toEntity(ReqDto dto);
+
+
 }
