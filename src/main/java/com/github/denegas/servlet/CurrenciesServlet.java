@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/currencies")
+@WebServlet({"/currencies", "/currencies/"})
 public class CurrenciesServlet extends HttpServlet {
     private CurrencyService service;
 
@@ -34,8 +34,8 @@ public class CurrenciesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CurrencyDto creatingCurrency = new CurrencyDto(req.getParameter("code"),
-                                                       req.getParameter("fullName"),
-                                                       req.getParameter("sign"));
+                req.getParameter("fullName"),
+                req.getParameter("sign"));
         CurrencyDto createdCurrency = service.insert(creatingCurrency);
         Json.writeJson(resp, HttpServletResponse.SC_CREATED, createdCurrency);
     }
