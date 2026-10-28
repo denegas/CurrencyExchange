@@ -1,12 +1,14 @@
 package com.github.denegas.entity;
 
+import java.math.BigDecimal;
+
 public class ExchangeRate {
-    private int id;
+    private Long id;
     private Currency baseCurrency;
     private Currency targetCurrency;
-    private double rate;
+    private BigDecimal rate;
 
-    public ExchangeRate(int id, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRate(Long id, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -17,11 +19,11 @@ public class ExchangeRate {
 
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -41,11 +43,11 @@ public class ExchangeRate {
         this.targetCurrency = targetCurrency;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }
