@@ -1,5 +1,6 @@
 package com.github.denegas.config;
 
+import com.github.denegas.exception.DbException;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -38,8 +39,7 @@ public class DatabaseInitializerListener implements ServletContextListener {
             }
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-            //TODO: think what the best exception for this case
+            throw new DbException("error while read resource file", e);
         }
 
     }
@@ -69,8 +69,7 @@ public class DatabaseInitializerListener implements ServletContextListener {
 
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-            //TODO: think what the best exception for this case
+            throw new DbException("error while executeQueries",e);
         }
     }
 }
