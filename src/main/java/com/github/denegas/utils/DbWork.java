@@ -1,5 +1,10 @@
 package com.github.denegas.utils;
 
+import com.github.denegas.exception.DbException;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -7,28 +12,31 @@ public final class DbWork {
     private DbWork() {
     }
 
-    public static void setPreparedStatementParameters(PreparedStatement ps, String... params) {
-        if (params == null) {
-            return;
-        }
-        for (int i = 0; i < params.length; i++) {
-            try {
-                ps.setString(i + 1, params[i]);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static void setPreparedStatementParameters(PreparedStatement ps, String code, String fullName, String sign) throws SQLException {
+        ps.setString(1, code);
+        ps.setString(2, fullName);
+        ps.setString(3, sign);
     }
-    public static void setPreparedStatementParameters(PreparedStatement ps, int... params) {
-        if (params == null) {
-            return;
+    public static void setPreparedStatementParameters(PreparedStatement ps, String code) throws SQLException{
+        ps.setString(1, code);
+    }
+
+    public static Connection connect(String url) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            return DriverManager.getConnection(url);
+        } catch (ClassNotFoundException e) {
+            throw new DbException("driver is not found", e);
+        } catch (SQLException e) {
+            throw new DbException("error while connecting", e);
         }
-        for (int i = 0; i < params.length; i++) {
-            try {
-                ps.setInt(i + 1, params[i]);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
+
+    }
+
+    public static void setPreparedStatementParameters(PreparedStatement ps,
+                                                      long baseCurrencyId, long targetCurrencyId, BigDecimal rate) throws SQLException {
+        ps.setLong(1, baseCurrencyId);
+        ps.setLong(2, targetCurrencyId);
+        ps.setBigDecimal(3, rate);
     }
 }

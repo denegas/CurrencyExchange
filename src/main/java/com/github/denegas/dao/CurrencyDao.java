@@ -32,7 +32,7 @@ public class CurrencyDao implements Dao<Currency> {
 
     @Override
     public List<Currency> getAll() {
-        try (Connection connection = connect();
+        try (Connection connection = DbWork.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_QUERY)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -44,8 +44,9 @@ public class CurrencyDao implements Dao<Currency> {
 
     public Optional<Currency> findByCode(String code) {
 
-        try (Connection connection = connect()) {
-            PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY);
+        try (Connection connection = DbWork.connect(url);
+             PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY)) {
+
             DbWork.setPreparedStatementParameters(ps, code);
             ResultSet rs = ps.executeQuery();
 
@@ -61,7 +62,7 @@ public class CurrencyDao implements Dao<Currency> {
         if (existsByCode(currency.getCode())) {
             throw new AlreadyExistsException("creating currency already exists");
         }
-        try (Connection connection = connect();
+        try (Connection connection = DbWork.connect(url);
              PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             DbWork.setPreparedStatementParameters(ps, currency.getCode(), currency.getFullName(), currency.getSign());
@@ -82,18 +83,6 @@ public class CurrencyDao implements Dao<Currency> {
     }
 
 
-    private Connection connect() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            return DriverManager.getConnection(url);
-        } catch (ClassNotFoundException e) {
-            throw new DbException("driver is not found", e);
-        } catch (SQLException e) {
-            throw new DbException("error while connecting", e);
-        }
-
-    }
-
     private long getCreatedCurrencyId(ResultSet generatedKeys) {
         try {
             if (generatedKeys.next()) {
@@ -109,16 +98,12 @@ public class CurrencyDao implements Dao<Currency> {
 
         try {
             if (resultSet.next()) {
-                Currency currency = new Currency(
-                        resultSet.getLong(1),
-                        resultSet.getString("code"),
-                        resultSet.getString("full_name"),
-                        resultSet.getString("sign"));
+                Currency currency = mapRowToCurrency(resultSet);
 
                 return Optional.of(currency);
             }
         } catch (SQLException e) {
-            throw new DbException("error while getting currency",e);
+            throw new DbException("error while getting currency", e);
         }
         return Optional.empty();
     }
@@ -128,19 +113,20 @@ public class CurrencyDao implements Dao<Currency> {
 
         try {
             while (resultSet.next()) {
-                Currency currency = new Currency(
-                        resultSet.getLong(1),
-                        resultSet.getString("code"),
-                        resultSet.getString("full_name"),
-                        resultSet.getString("sign"));
+                Currency currency = mapRowToCurrency(resultSet);
                 currencies.add(currency);
-
             }
             return currencies;
         } catch (SQLException e) {
-            throw new DbException("error while getting currencies",e);
+            throw new DbException("error while getting currencies", e);
         }
+    }
 
-
+    private Currency mapRowToCurrency(ResultSet resultSet) throws SQLException {
+        return new Currency(resultSet.getLong("id"),
+                resultSet.getString("code"),
+                resultSet.getString("full_name"),
+                resultSet.getString("sign")
+        );
     }
 }
