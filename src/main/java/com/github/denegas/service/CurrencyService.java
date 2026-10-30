@@ -6,7 +6,7 @@ import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.exception.*;
 import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.validator.CurrencyValidator;
+import com.github.denegas.validator.currency.CurrencyValidator;
 
 import java.util.List;
 import java.util.Optional;

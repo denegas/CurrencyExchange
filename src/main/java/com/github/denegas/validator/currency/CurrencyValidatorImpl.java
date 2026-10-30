@@ -1,4 +1,4 @@
-package com.github.denegas.validator;
+package com.github.denegas.validator.currency;
 
 import com.github.denegas.entity.Currency;
 import com.github.denegas.exception.InvalidCurrencyException;
@@ -11,11 +11,12 @@ public class CurrencyValidatorImpl implements CurrencyValidator {
     private static final String codeRegex = "^[A-Z]{3}$";
     private static final Pattern codePattern = Pattern.compile(codeRegex);
 
+    @Override
     public boolean isValid(Currency currency) {
         return currency != null && isValidCurrencyCode(currency.getCode())
                 && isValidCurrencyFullName(currency) && isValidCurrencySign(currency);
     }
-
+    @Override
     public boolean isValidCurrencyCode(String code) {
         if (code == null) {
             return false;
@@ -24,6 +25,7 @@ public class CurrencyValidatorImpl implements CurrencyValidator {
         return code.length() == CURRENCY_CODE_LENGTH && code.equals(code.toUpperCase()) && matcher.matches();
     }
 
+    @Override
     public String validateCode(String code) {
         if (code == null) {
             throw new InvalidCurrencyException("currency's code is null");
