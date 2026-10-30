@@ -1,4 +1,4 @@
-package com.github.denegas.mapper;
+package com.github.denegas.mapper.currency;
 
 import com.github.denegas.dto.CurrencyRequestDto;
 import com.github.denegas.dto.CurrencyResponseDto;

@@ -1,8 +1,8 @@
 package com.github.denegas.config;
 
 import com.github.denegas.dao.CurrencyDao;
-import com.github.denegas.mapper.CurrencyMapper;
-import com.github.denegas.mapper.CurrencyMapperImpl;
+import com.github.denegas.mapper.currency.CurrencyMapper;
+import com.github.denegas.mapper.currency.CurrencyMapperImpl;
 import com.github.denegas.service.CurrencyService;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
