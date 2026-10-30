@@ -17,8 +17,21 @@ public final class DbWork {
         ps.setString(2, fullName);
         ps.setString(3, sign);
     }
-    public static void setPreparedStatementParameters(PreparedStatement ps, String code) throws SQLException{
+
+    public static void setPreparedStatementParameters(PreparedStatement ps, String code) throws SQLException {
         ps.setString(1, code);
+    }
+
+    public static void setPreparedStatementParameters(PreparedStatement ps, BigDecimal rate,
+                                                      Long baseCurrencyId, Long targetCurrencyId) throws SQLException {
+        ps.setBigDecimal(1, rate);
+        ps.setLong(2, baseCurrencyId);
+        ps.setLong(3, targetCurrencyId);
+    }
+
+    public static void setPreparedStatementParameters(PreparedStatement ps, String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        ps.setString(1, baseCurrencyCode);
+        ps.setString(2, targetCurrencyCode);
     }
 
     public static Connection connect(String url) {
