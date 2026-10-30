@@ -14,9 +14,15 @@ public class ExchangeRateValidatorImpl implements ExchangeRateValidator {
         || exchangeRate.rate() == null) {
             return false;
         }
+        if (isSameCurrencies(exchangeRate.baseCurrencyCode(), exchangeRate.targetCurrencyCode())) {
+            return false;
+        }
 
         return currencyValidator.isValidCurrencyCode(exchangeRate.baseCurrencyCode())
                 && currencyValidator.isValidCurrencyCode(exchangeRate.targetCurrencyCode());
 
+    }
+    private boolean isSameCurrencies(String baseCode, String targetCode){
+        return baseCode.equals(targetCode);
     }
 }
