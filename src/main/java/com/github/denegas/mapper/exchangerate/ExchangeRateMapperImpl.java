@@ -14,6 +14,9 @@ public class ExchangeRateMapperImpl implements ExchangeRateMapper {
 
     @Override
     public List<ExchangeRateResponseDto> toDtoList(List<ExchangeRate> rates) {
+        if (rates == null) {
+            return new ArrayList<>();
+        }
         List<ExchangeRateResponseDto> dtoRates = new ArrayList<>();
         for (var rate : rates) {
             dtoRates.add(toDto(rate));
@@ -23,6 +26,9 @@ public class ExchangeRateMapperImpl implements ExchangeRateMapper {
 
     @Override
     public ExchangeRateResponseDto toDto(ExchangeRate exchangeRate) {
+        if (exchangeRate == null) {
+            return null;
+        }
         CurrencyResponseDto baseCurrencyDto = currencyMapper.toDto(exchangeRate.getBaseCurrency());
         CurrencyResponseDto targetCurrencyDto = currencyMapper.toDto(exchangeRate.getTargetCurrency());
 
