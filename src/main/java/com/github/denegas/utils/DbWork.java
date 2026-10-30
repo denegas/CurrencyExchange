@@ -23,10 +23,10 @@ public final class DbWork {
     }
 
     public static void setPreparedStatementParameters(PreparedStatement ps, BigDecimal rate,
-                                                      Long baseCurrencyId, Long targetCurrencyId) throws SQLException {
+                                                      String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         ps.setBigDecimal(1, rate);
-        ps.setLong(2, baseCurrencyId);
-        ps.setLong(3, targetCurrencyId);
+        ps.setString(2, baseCurrencyCode);
+        ps.setString(3, targetCurrencyCode);
     }
 
     public static void setPreparedStatementParameters(PreparedStatement ps, String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
