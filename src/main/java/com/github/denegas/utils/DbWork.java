@@ -45,11 +45,4 @@ public final class DbWork {
         }
 
     }
-
-    public static void setPreparedStatementParameters(PreparedStatement ps,
-                                                      long baseCurrencyId, long targetCurrencyId, BigDecimal rate) throws SQLException {
-        ps.setLong(1, baseCurrencyId);
-        ps.setLong(2, targetCurrencyId);
-        ps.setBigDecimal(3, rate);
-    }
 }
