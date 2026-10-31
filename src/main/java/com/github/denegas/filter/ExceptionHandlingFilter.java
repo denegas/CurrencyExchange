@@ -31,7 +31,7 @@ public class ExceptionHandlingFilter implements Filter {
         } catch (AlreadyExistsException e) {
             Json.writeJson(resp, HttpServletResponse.SC_CONFLICT, Map.of("message", e.getMessage()));
         } catch (DbException e) {
-            logger.log(Level.SEVERE, "db error: ", e.getMessage());
+            logger.log(Level.SEVERE, "db error: ", e);
             Json.writeJson(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Map.of("message", "we have some troubles now"));
         }
     }

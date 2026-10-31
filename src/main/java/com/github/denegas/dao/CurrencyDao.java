@@ -2,7 +2,6 @@ package com.github.denegas.dao;
 
 
 import com.github.denegas.entity.Currency;
-import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.exception.DbException;
 import com.github.denegas.utils.DbWork;
 
