@@ -22,7 +22,7 @@ public class ExceptionHandlingFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         try {
             chain.doFilter(request, response);
-        } catch (InvalidCurrencyException e) {
+        } catch (InvalidCurrencyException | InvalidExchangeRateException e) {
             Json.writeJson(resp, HttpServletResponse.SC_BAD_REQUEST, Map.of("message", e.getMessage()));
         } catch (NotFoundException e) {
             Json.writeJson(resp, HttpServletResponse.SC_NOT_FOUND, Map.of("message", e.getMessage()));
