@@ -59,9 +59,6 @@ public class CurrencyDao implements Dao<Currency> {
 
     @Override
     public Currency insert(Currency currency) {
-        if (existsByCode(currency.getCode())) {
-            throw new AlreadyExistsException("creating currency already exists");
-        }
         try (Connection connection = DbWork.connect(url);
              PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
