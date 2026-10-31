@@ -9,20 +9,31 @@ public class ExchangeRateValidatorImpl implements ExchangeRateValidator {
     CurrencyValidator currencyValidator = new CurrencyValidatorImpl();
 
     @Override
-    public boolean isValid(ExchangeRateRequestDto exchangeRate) {
-        if (exchangeRate == null || exchangeRate.baseCurrencyCode() == null || exchangeRate.targetCurrencyCode() == null
-        || exchangeRate.rate() == null) {
+    public boolean isValid(ExchangeRateRequestDto requestDto) {
+        if (requestDto == null || requestDto.baseCurrencyCode() == null || requestDto.targetCurrencyCode() == null
+                || requestDto.rate() == null) {
             return false;
         }
-        if (isSameCurrencies(exchangeRate.baseCurrencyCode(), exchangeRate.targetCurrencyCode())) {
+        if (isSameCurrencies(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode())) {
             return false;
         }
 
-        return currencyValidator.isValidCurrencyCode(exchangeRate.baseCurrencyCode())
-                && currencyValidator.isValidCurrencyCode(exchangeRate.targetCurrencyCode());
+        return currencyValidator.isValidCurrencyCode(requestDto.baseCurrencyCode())
+                && currencyValidator.isValidCurrencyCode(requestDto.targetCurrencyCode());
 
     }
-    private boolean isSameCurrencies(String baseCode, String targetCode){
+
+    public boolean isValidForFind(ExchangeRateRequestDto requestDto) {
+        if (requestDto == null || requestDto.baseCurrencyCode() == null || requestDto.targetCurrencyCode() == null) {
+            return false;
+        }
+        boolean isValidBaseCode = currencyValidator.isValidCurrencyCode(requestDto.baseCurrencyCode());
+        boolean isValidTargetCode = currencyValidator.isValidCurrencyCode(requestDto.targetCurrencyCode());
+
+        return isValidBaseCode && isValidTargetCode;
+    }
+
+    private boolean isSameCurrencies(String baseCode, String targetCode) {
         return baseCode.equals(targetCode);
     }
 }
