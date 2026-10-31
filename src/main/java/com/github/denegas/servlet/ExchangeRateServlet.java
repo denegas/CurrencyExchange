@@ -39,10 +39,10 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     private String getBaseCurrencyCode(HttpServletRequest request) {
-        return request.getPathInfo().trim().replace("/", "").substring(0, 3);
+        return request.getPathInfo().trim().replace("/", "").substring(0, 3).toUpperCase();
     }
 
     private String getTargetCurrencyCode(HttpServletRequest request) {
-        return request.getPathInfo().trim().replace("/", "").substring(3);
+        return request.getPathInfo().trim().replace("/", "").substring(3).toUpperCase();
     }
 }

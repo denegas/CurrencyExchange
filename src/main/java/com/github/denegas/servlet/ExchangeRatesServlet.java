@@ -2,6 +2,7 @@ package com.github.denegas.servlet;
 
 import com.github.denegas.dto.ExchangeRateRequestDto;
 import com.github.denegas.dto.ExchangeRateResponseDto;
+import com.github.denegas.exception.InvalidExchangeRateException;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.utils.Json;
 import jakarta.servlet.ServletException;
@@ -35,13 +36,29 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        ExchangeRateRequestDto creatingRate = new ExchangeRateRequestDto(
-                req.getParameter("baseCurrencyCode"),
-                req.getParameter("targetCurrencyCode"),
-                new BigDecimal(req.getParameter("rate"))
-        );
+        ExchangeRateRequestDto creatingRate = getRequestRate(req);
         ExchangeRateResponseDto exchangeRateResponseDto = service.insert(creatingRate);
 
         Json.writeJson(resp, HttpServletResponse.SC_CREATED, exchangeRateResponseDto);
+    }
+
+    private ExchangeRateRequestDto getRequestRate(HttpServletRequest req) {
+        String baseCurrencyCode = req.getParameter("baseCurrencyCode");
+        String targetCurrencyCode = req.getParameter("targetCurrencyCode");
+        String rateParam = req.getParameter("rate");
+        BigDecimal rate;
+        if (isInvalid(baseCurrencyCode) || isInvalid(targetCurrencyCode) || isInvalid(rateParam)) {
+            throw new InvalidExchangeRateException("bad parameters for creating exchangeRate");
+        }
+        try {
+            rate = new BigDecimal(rateParam);
+        } catch (NumberFormatException e){
+            throw new InvalidExchangeRateException("bad parameters for creating exchangeRate");
+        }
+        return new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
+
+    }
+    private boolean isInvalid(String param){
+        return param == null || param.isBlank();
     }
 }
