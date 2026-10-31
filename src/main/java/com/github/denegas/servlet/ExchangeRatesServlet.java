@@ -1,5 +1,6 @@
 package com.github.denegas.servlet;
 
+import com.github.denegas.dto.ExchangeRateRequestDto;
 import com.github.denegas.dto.ExchangeRateResponseDto;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.utils.Json;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @WebServlet("/exchangeRates")
@@ -19,7 +21,7 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         service = (ExchangeRateService) getServletConfig().getServletContext().getAttribute("exchangeRateService");
-        if (service == null){
+        if (service == null) {
             throw new ServletException("couldn't find exchange rate service");
         }
     }
@@ -32,6 +34,14 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+
+        ExchangeRateRequestDto creatingRate = new ExchangeRateRequestDto(
+                req.getParameter("baseCurrencyCode"),
+                req.getParameter("targetCurrencyCode"),
+                new BigDecimal(req.getParameter("rate"))
+        );
+        ExchangeRateResponseDto exchangeRateResponseDto = service.insert(creatingRate);
+
+        Json.writeJson(resp, HttpServletResponse.SC_CREATED, exchangeRateResponseDto);
     }
 }
