@@ -64,4 +64,27 @@ public class ExchangeRateService {
         }
         return mapper.toDto(optionalRate.get());
     }
+
+    public ExchangeRateResponseDto update(ExchangeRateRequestDto requestDto) {
+        if (!validator.isValid(requestDto)) {
+            throw new InvalidExchangeRateException("invalid exchange rate for update");
+        }
+        if (!dao.existsRate(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode())){
+            throw new NotFoundException("not found updating exchange rate");
+        }
+        ExchangeRate updatingExchangeRate = new ExchangeRate();
+        updatingExchangeRate.setRate(requestDto.rate());
+        updatingExchangeRate.setBaseCurrency(new Currency(requestDto.baseCurrencyCode(), null, null));
+        updatingExchangeRate.setTargetCurrency(new Currency(requestDto.targetCurrencyCode(), null, null));
+        //TODO: add check where user change rate to equal value
+            if (!dao.update(updatingExchangeRate)) {
+                throw new NotFoundException("no one row affected");
+            }
+            Optional<ExchangeRate> updatedRate = dao.findByCodes(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode());
+            if (updatedRate.isEmpty()) {
+                throw new NotFoundException("not found updating rate");
+            }
+            return mapper.toDto(updatedRate.get());
+
+    }
 }

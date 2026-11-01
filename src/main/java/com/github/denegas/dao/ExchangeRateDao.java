@@ -15,7 +15,6 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
     private static final String TARGET_CURRENCY_NAME = "target";
     private static final String UPDATE_QUERY = """
             UPDATE ExchangeRates
-            
             SET rate = ?
             WHERE base_currency_id = (SELECT id FROM Currencies WHERE code = ?)
             AND target_currency_id = (SELECT id FROM Currencies WHERE code = ?);
@@ -169,23 +168,19 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
         } catch (SQLException e) {
             throw new DbException("error while getting currencies(base, target)");
         }
-
     }
 
-    //TODO: update method
-    public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
+    public boolean update(ExchangeRate exchangeRate) {
         try (Connection connection = DbWork.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
-            long baseCurrencyId = exchangeRate.getBaseCurrency().getId();
-            long targetCurrencyId = exchangeRate.getTargetCurrency().getId();
+            String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
+            String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
 
-            // DbWork.setPreparedStatementParameters(preparedStatement, exchangeRate.getRate(), baseCurrencyId, targetCurrencyId);
+            DbWork.setPreparedStatementParameters(preparedStatement, exchangeRate.getRate(), baseCurrencyCode, targetCurrencyCode);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                return Optional.of(exchangeRate);
-            }
-            return Optional.empty();
+
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new DbException("error while updating", e);
         }
