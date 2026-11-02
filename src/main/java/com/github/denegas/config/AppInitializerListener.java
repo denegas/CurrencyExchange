@@ -8,8 +8,11 @@ import com.github.denegas.mapper.exchangerate.ExchangeRateMapper;
 import com.github.denegas.mapper.exchangerate.ExchangeRateMapperImpl;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.service.ExchangeRateService;
+import com.github.denegas.service.ExchangeService;
 import com.github.denegas.validator.currency.CurrencyValidator;
 import com.github.denegas.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.validator.exchange.ExchangeValidator;
+import com.github.denegas.validator.exchange.ExchangeValidatorImpl;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidatorImpl;
 import jakarta.servlet.ServletContextEvent;
@@ -31,5 +34,9 @@ public class AppInitializerListener implements ServletContextListener {
         ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidatorImpl();
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, exchangeRateMapper, exchangeRateValidator);
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
+
+        ExchangeValidator exchangeValidator = new ExchangeValidatorImpl();
+        ExchangeService exchangeService = new ExchangeService(exchangeRateDao, exchangeValidator);
+        sce.getServletContext().setAttribute("exchangeService", exchangeService);
     }
 }
