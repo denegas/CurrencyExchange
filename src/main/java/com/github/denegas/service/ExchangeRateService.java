@@ -6,9 +6,9 @@ import com.github.denegas.dto.ExchangeRateResponseDto;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.exception.AlreadyExistsException;
-import com.github.denegas.exception.InvalidExchangeRateException;
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.exception.NothingThereException;
+import com.github.denegas.exception.ValidationException;
 import com.github.denegas.mapper.exchangerate.ExchangeRateMapper;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
 
@@ -36,7 +36,7 @@ public class ExchangeRateService {
 
     public ExchangeRateResponseDto insert(ExchangeRateRequestDto exchangeRateRequestDto) {
         if (!validator.isValid(exchangeRateRequestDto)) {
-            throw new InvalidExchangeRateException("invalid exchange rate to create");
+            throw new ValidationException("invalid exchange rate to create");
         }
         String baseCurrencyCode = exchangeRateRequestDto.baseCurrencyCode();
         String targetCurrencyCode = exchangeRateRequestDto.targetCurrencyCode();
@@ -56,7 +56,7 @@ public class ExchangeRateService {
 
     public ExchangeRateResponseDto findByCodes(ExchangeRateRequestDto requestDto) {
         if (!validator.isValidForFind(requestDto)) {
-            throw new InvalidExchangeRateException("invalid exchange rate for finding");
+            throw new ValidationException("invalid exchange rate for finding");
         }
         Optional<ExchangeRate> optionalRate = dao.findByCodes(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode());
         if (optionalRate.isEmpty()) {
@@ -67,7 +67,7 @@ public class ExchangeRateService {
 
     public ExchangeRateResponseDto update(ExchangeRateRequestDto requestDto) {
         if (!validator.isValid(requestDto)) {
-            throw new InvalidExchangeRateException("invalid exchange rate for update");
+            throw new ValidationException("invalid exchange rate for update");
         }
         if (!dao.existsRate(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode())){
             throw new NotFoundException("not found updating exchange rate");

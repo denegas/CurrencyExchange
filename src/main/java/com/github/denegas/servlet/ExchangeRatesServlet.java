@@ -2,7 +2,7 @@ package com.github.denegas.servlet;
 
 import com.github.denegas.dto.ExchangeRateRequestDto;
 import com.github.denegas.dto.ExchangeRateResponseDto;
-import com.github.denegas.exception.InvalidExchangeRateException;
+import com.github.denegas.exception.ValidationException;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.utils.Json;
 import jakarta.servlet.ServletException;
@@ -48,12 +48,12 @@ public class ExchangeRatesServlet extends HttpServlet {
         String rateParam = req.getParameter("rate");
         BigDecimal rate;
         if (isInvalid(baseCurrencyCode) || isInvalid(targetCurrencyCode) || isInvalid(rateParam)) {
-            throw new InvalidExchangeRateException("bad parameters for creating exchangeRate");
+            throw new ValidationException("bad parameters for creating exchangeRate");
         }
         try {
             rate = new BigDecimal(rateParam);
         } catch (NumberFormatException e){
-            throw new InvalidExchangeRateException("bad parameters for creating exchangeRate");
+            throw new ValidationException("bad parameters for creating exchangeRate");
         }
         return new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
 

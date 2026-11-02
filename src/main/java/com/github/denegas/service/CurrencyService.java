@@ -25,7 +25,7 @@ public class CurrencyService {
     public CurrencyResponseDto insert(CurrencyRequestDto currencyRequestDto) {
         Currency currency = currencyMapper.toEntity(currencyRequestDto);
         if (!currencyValidator.isValid(currency)) {
-            throw new InvalidCurrencyException("invalid currency to create");
+            throw new ValidationException("invalid currency to create");
         }
         if (currencyDao.existsByCode(currency.getCode())) {
             throw new AlreadyExistsException("creating currency already exists");
@@ -38,7 +38,7 @@ public class CurrencyService {
     public CurrencyResponseDto findByCode(String code) {
         String validCaseCurrencyCode = currencyValidator.validateCode(code);
         if (!currencyValidator.isValidCurrencyCode(validCaseCurrencyCode)) {
-            throw new InvalidCurrencyException("invalid currency's code!");
+            throw new ValidationException("invalid currency's code!");
         }
         Optional<Currency> optionalCurrency = currencyDao.findByCode(validCaseCurrencyCode);
         if (optionalCurrency.isEmpty()) {
