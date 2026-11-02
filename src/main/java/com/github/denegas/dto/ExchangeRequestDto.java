@@ -1,4 +1,6 @@
 package com.github.denegas.dto;
 
-public record ExchangeRequestDto(String baseCurrencyCode, String targetCurrencyCode, Double amount) {
+import java.math.BigDecimal;
+
+public record ExchangeRequestDto(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
 }
