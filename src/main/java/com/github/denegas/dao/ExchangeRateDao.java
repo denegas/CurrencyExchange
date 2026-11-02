@@ -3,6 +3,7 @@ package com.github.denegas.dao;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.exception.DbException;
+import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.utils.DbWork;
 
 import java.sql.*;
@@ -159,11 +160,10 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
                             baseCurrency, targetCurrency,
                             exchangeRate.getRate());
                 } else {
-                    throw new DbException("Insertion failed, couldn't find currencies");
+                    throw new NotFoundException("couldn't find currencies for creating exchange rate");
                 }
 
             }
-
 
         } catch (SQLException e) {
             throw new DbException("error while getting currencies(base, target)");
@@ -212,7 +212,6 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
     private ExchangeRate mapRowToExchangeRate(ResultSet resultSet) throws SQLException {
         Currency baseCurrency = mapRowToCurrency(resultSet, BASE_CURRENCY_NAME);
         Currency targetCurrency = mapRowToCurrency(resultSet, TARGET_CURRENCY_NAME);
-
         return new ExchangeRate(
                 resultSet.getLong("exhange_rates_id"),
                 baseCurrency,
