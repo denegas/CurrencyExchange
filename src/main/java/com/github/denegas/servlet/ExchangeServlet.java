@@ -5,6 +5,7 @@ import com.github.denegas.dto.ExchangeResponseDto;
 import com.github.denegas.exception.ValidationException;
 import com.github.denegas.service.ExchangeService;
 import com.github.denegas.utils.Json;
+import com.github.denegas.utils.RequestUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,20 +39,13 @@ public class ExchangeServlet extends HttpServlet {
         String baseCurrencyCode = req.getParameter("from");
         String targetCurrencyCode = req.getParameter("to");
         String amountParam = req.getParameter("amount");
-        BigDecimal amount;
-        if (isInvalid(baseCurrencyCode) || isInvalid(targetCurrencyCode) || isInvalid(amountParam)) {
+
+        if (RequestUtils.isInvalid(baseCurrencyCode) || RequestUtils.isInvalid(targetCurrencyCode) || RequestUtils.isInvalid(amountParam)) {
             throw new ValidationException("bad parameters for exchange");
         }
-        try {
-            amount = new BigDecimal(amountParam);
-        } catch (NumberFormatException e) {
-            throw new ValidationException("bad amount parameter for exchange");
-        }
+        BigDecimal amount = RequestUtils.convertToBigDecimal(amountParam, "Invalid amount parameter");
         return new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
 
     }
 
-    private boolean isInvalid(String param) {
-        return param == null || param.isBlank();
-    }
 }

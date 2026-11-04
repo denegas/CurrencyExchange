@@ -5,6 +5,7 @@ import com.github.denegas.dto.ExchangeRateResponseDto;
 import com.github.denegas.exception.ValidationException;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.utils.Json;
+import com.github.denegas.utils.RequestUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -55,18 +56,14 @@ public class ExchangeRateServlet extends HttpServlet {
         if (optionalRateParam.isEmpty()) {
             throw new ValidationException("bad rate parameter for updating exchangeRate");
         }
-        String rateParam = optionalRateParam.get();
         String baseCurrencyCode = getBaseCurrencyCode(req);
         String targetCurrencyCode = getTargetCurrencyCode(req);
-        BigDecimal rate;
-        if (isInvalid(baseCurrencyCode) || isInvalid(targetCurrencyCode) || isInvalid(rateParam)) {
+        String rateParam = optionalRateParam.get();
+        BigDecimal rate  = RequestUtils.convertToBigDecimal(rateParam, "bad rate parameter for updating exchangeRate");
+        if (RequestUtils.isInvalid(baseCurrencyCode) || RequestUtils.isInvalid(targetCurrencyCode) || RequestUtils.isInvalid(rateParam)) {
             throw new ValidationException("bad parameters for updating exchangeRate");
         }
-        try {
-            rate = new BigDecimal(rateParam);
-        } catch (NumberFormatException e) {
-            throw new ValidationException("bad rate parameter for updating exchangeRate");
-        }
+
         ExchangeRateRequestDto requestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
 
         ExchangeRateResponseDto responseDto = service.update(requestDto);
@@ -88,12 +85,8 @@ public class ExchangeRateServlet extends HttpServlet {
         return request.getPathInfo().trim().replace("/", "").substring(3).toUpperCase();
     }
 
-    private boolean isInvalid(String param) {
-        return param == null || param.isBlank();
-    }
 
     private Optional<String> getPatchParam(HttpServletRequest req, String name) throws IOException {
-        req.setCharacterEncoding("UTF-8");
 
         String body;
         try (BufferedReader reader = req.getReader()) {
