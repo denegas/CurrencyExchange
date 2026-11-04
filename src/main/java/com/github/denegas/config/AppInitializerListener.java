@@ -36,7 +36,7 @@ public class AppInitializerListener implements ServletContextListener {
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
 
         ExchangeValidator exchangeValidator = new ExchangeValidatorImpl();
-        ExchangeService exchangeService = new ExchangeService(exchangeRateDao, exchangeValidator);
+        ExchangeService exchangeService = new ExchangeService(exchangeRateDao, currencyDao, exchangeValidator);
         sce.getServletContext().setAttribute("exchangeService", exchangeService);
     }
 }

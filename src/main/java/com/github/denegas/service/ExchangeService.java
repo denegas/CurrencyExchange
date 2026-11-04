@@ -1,8 +1,10 @@
 package com.github.denegas.service;
 
+import com.github.denegas.dao.CurrencyDao;
 import com.github.denegas.dao.ExchangeRateDao;
 import com.github.denegas.dto.ExchangeRequestDto;
 import com.github.denegas.dto.ExchangeResponseDto;
+import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.exception.ValidationException;
@@ -17,10 +19,12 @@ public class ExchangeService {
     private static final int RATE_SCALE = 2;
     private static final int AMOUNT_SCALE = 2;
     private final ExchangeRateDao exchangeRateDao;
+    private final CurrencyDao currencyDao;
     private final ExchangeValidator validator;
 
-    public ExchangeService(ExchangeRateDao exchangeRateDao, ExchangeValidator validator) {
+    public ExchangeService(ExchangeRateDao exchangeRateDao, CurrencyDao currencyDao, ExchangeValidator validator) {
         this.exchangeRateDao = exchangeRateDao;
+        this.currencyDao = currencyDao;
         this.validator = validator;
     }
 
@@ -45,11 +49,11 @@ public class ExchangeService {
         );
     }
 
-    private BigDecimal calculateConvertedAmount(BigDecimal rate, BigDecimal amount) {
-        return rate.multiply(amount);
-    }
 
     private ExchangeRate getRateInfo(String baseCurrencyCode, String targetCurrencyCode) {
+        if (isSameCurrencies(baseCurrencyCode, targetCurrencyCode)) {
+            return getSameCurrencyRate(baseCurrencyCode);
+        }
         Optional<ExchangeRate> optionalBaseTargetRate = exchangeRateDao.findByCodes(baseCurrencyCode, targetCurrencyCode);
         if (optionalBaseTargetRate.isPresent()) {
             return optionalBaseTargetRate.get();
@@ -69,6 +73,22 @@ public class ExchangeService {
         //if didn't find usd-base or usd-target rates
         throw new NotFoundException("couldn't find exchange rate");
 
+    }
+
+    private boolean isSameCurrencies(String baseCurrencyCode, String targetCurrencyCode) {
+        return baseCurrencyCode.equalsIgnoreCase(targetCurrencyCode);
+    }
+
+    private ExchangeRate getSameCurrencyRate(String currencyCode) {
+        Optional<Currency> optionalSameCurrency = currencyDao.findByCode(currencyCode);
+        if (optionalSameCurrency.isEmpty()) {
+            throw new NotFoundException("couldn't find currency");
+        }
+        return new ExchangeRate(
+                optionalSameCurrency.get(),
+                optionalSameCurrency.get(),
+                BigDecimal.ONE
+        );
     }
 
     private Optional<ExchangeRate> getRateByTargetBase(String baseCurrencyCode, String targetCurrencyCode) {
@@ -105,5 +125,8 @@ public class ExchangeService {
             return Optional.of(usdBaseUsdTarget);
         }
         return Optional.empty();
+    }
+    private BigDecimal calculateConvertedAmount(BigDecimal rate, BigDecimal amount) {
+        return rate.multiply(amount);
     }
 }
