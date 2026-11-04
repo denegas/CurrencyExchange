@@ -14,7 +14,8 @@ import java.util.Optional;
 
 public class ExchangeService {
     private static final String USD_CODE = "USD";
-    private static final int RATE_SCALE = 6;
+    private static final int RATE_SCALE = 2;
+    private static final int AMOUNT_SCALE = 2;
     private final ExchangeRateDao exchangeRateDao;
     private final ExchangeValidator validator;
 
@@ -29,53 +30,15 @@ public class ExchangeService {
         }
         String baseCurrencyCode = requestDto.baseCurrencyCode();
         String targetCurrencyCode = requestDto.targetCurrencyCode();
-        BigDecimal rate;
-        BigDecimal amount = requestDto.amount();
-        ExchangeRate exchangeRate;
 
-        Optional<ExchangeRate> optionalBaseTargetRate = exchangeRateDao.findByCodes(baseCurrencyCode, targetCurrencyCode);
-        if (optionalBaseTargetRate.isPresent()) {
-            exchangeRate = optionalBaseTargetRate.get();
-            rate = exchangeRate.getRate();
-        }
-        // if didn't find base-target rate
-        else {
-            Optional<ExchangeRate> optionalTargetBaseRate = exchangeRateDao.findByCodes(targetCurrencyCode, baseCurrencyCode);
-            if (optionalTargetBaseRate.isPresent()) {
-                exchangeRate = optionalTargetBaseRate.get();
-                rate = BigDecimal.ONE.divide(exchangeRate.getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
-            }
-            // if didn't find target-base rate
-            else {
-                Optional<ExchangeRate> optionalUsdBase = exchangeRateDao.findByCodes(USD_CODE, baseCurrencyCode);
-                Optional<ExchangeRate> optionalUsdTarget = exchangeRateDao.findByCodes(USD_CODE, targetCurrencyCode);
-                if (optionalUsdBase.isPresent() && optionalUsdTarget.isPresent()) {
-                    ExchangeRate usdBase = optionalUsdBase.get();
-                    ExchangeRate usdTarget = optionalUsdTarget.get();
-                    rate = usdTarget.getRate().divide(usdBase.getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
-                    BigDecimal convertedAmount = calculateConvertedAmount(rate, amount);
-
-                    return new ExchangeResponseDto(
-                            usdBase.getTargetCurrency(),
-                            usdTarget.getTargetCurrency(),
-                            rate,
-                            amount,
-                            convertedAmount
-                    );
-                }
-                //if didn't find usd-base or usd-target rates
-                else {
-                    throw new NotFoundException("couldn't find exchange rate");
-                }
-            }
-        }
-
-
-        BigDecimal convertedAmount = calculateConvertedAmount(rate, amount);
+        BigDecimal amount = requestDto.amount().setScale(AMOUNT_SCALE, RoundingMode.HALF_EVEN);
+        ExchangeRate rateInfo = getRateInfo(baseCurrencyCode, targetCurrencyCode);
+        BigDecimal rate = rateInfo.getRate();
+        BigDecimal convertedAmount = calculateConvertedAmount(rate, amount).setScale(AMOUNT_SCALE, RoundingMode.HALF_EVEN);
 
         return new ExchangeResponseDto(
-                exchangeRate.getBaseCurrency(),
-                exchangeRate.getTargetCurrency(),
+                rateInfo.getBaseCurrency(),
+                rateInfo.getTargetCurrency(),
                 rate,
                 amount,
                 convertedAmount
@@ -84,5 +47,63 @@ public class ExchangeService {
 
     private BigDecimal calculateConvertedAmount(BigDecimal rate, BigDecimal amount) {
         return rate.multiply(amount);
+    }
+
+    private ExchangeRate getRateInfo(String baseCurrencyCode, String targetCurrencyCode) {
+        Optional<ExchangeRate> optionalBaseTargetRate = exchangeRateDao.findByCodes(baseCurrencyCode, targetCurrencyCode);
+        if (optionalBaseTargetRate.isPresent()) {
+            return optionalBaseTargetRate.get();
+        }
+
+        // if didn't find base-target rate
+        Optional<ExchangeRate> optionalTargetBaseRate = getRateByTargetBase(baseCurrencyCode, targetCurrencyCode);
+        if (optionalTargetBaseRate.isPresent()) {
+            return optionalTargetBaseRate.get();
+        }
+
+        // if didn't find target-base rate
+        Optional<ExchangeRate> optionalUsdBaseUsdTargetRate = getRateByUsd(baseCurrencyCode, targetCurrencyCode);
+        if (optionalUsdBaseUsdTargetRate.isPresent()) {
+            return optionalUsdBaseUsdTargetRate.get();
+        }
+        //if didn't find usd-base or usd-target rates
+        throw new NotFoundException("couldn't find exchange rate");
+
+    }
+
+    private Optional<ExchangeRate> getRateByTargetBase(String baseCurrencyCode, String targetCurrencyCode) {
+        Optional<ExchangeRate> optionalTargetBaseRate = exchangeRateDao.findByCodes(targetCurrencyCode, baseCurrencyCode);
+        if (optionalTargetBaseRate.isPresent()) {
+            BigDecimal rate = BigDecimal.ONE.divide(optionalTargetBaseRate.get().getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
+            ExchangeRate targetBaseRate = new ExchangeRate(
+                    optionalTargetBaseRate.get().getBaseCurrency(),
+                    optionalTargetBaseRate.get().getTargetCurrency(),
+                    rate
+            );
+
+            return Optional.of(targetBaseRate);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ExchangeRate> getRateByUsd(String baseCurrencyCode, String targetCurrencyCode) {
+        Optional<ExchangeRate> optionalUsdBase = exchangeRateDao.findByCodes(USD_CODE, baseCurrencyCode);
+        Optional<ExchangeRate> optionalUsdTarget = exchangeRateDao.findByCodes(USD_CODE, targetCurrencyCode);
+        if (optionalUsdBase.isPresent() && optionalUsdTarget.isPresent()) {
+            ExchangeRate usdBase = optionalUsdBase.get();
+            ExchangeRate usdTarget = optionalUsdTarget.get();
+            BigDecimal usdBaseRate = usdBase.getRate();
+            BigDecimal usdTargetRate = usdTarget.getRate();
+
+            BigDecimal rate = usdTargetRate.divide(usdBaseRate, RATE_SCALE, RoundingMode.HALF_EVEN);
+
+            ExchangeRate usdBaseUsdTarget = new ExchangeRate(
+                    usdBase.getTargetCurrency(),
+                    usdTarget.getTargetCurrency(),
+                    rate
+            );
+            return Optional.of(usdBaseUsdTarget);
+        }
+        return Optional.empty();
     }
 }
