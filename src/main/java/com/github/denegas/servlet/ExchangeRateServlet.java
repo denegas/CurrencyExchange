@@ -12,13 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
@@ -44,7 +40,9 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ExchangeRateRequestDto requestDto =
-                new ExchangeRateRequestDto(getBaseCurrencyCode(req), getTargetCurrencyCode(req), null);
+                new ExchangeRateRequestDto(RequestUtils.getBaseCurrencyCodeFromPath(req.getPathInfo()),
+                        RequestUtils.getTargetCurrencyCodeFromPath(req.getPathInfo()), null);
+
         ExchangeRateResponseDto responseDto = service.findByCodes(requestDto);
 
         Json.writeJson(resp, HttpServletResponse.SC_OK, responseDto);
@@ -52,14 +50,14 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Optional<String> optionalRateParam = getPatchParam(req, "rate");
+        Optional<String> optionalRateParam = RequestUtils.getPatchParam(req.getReader(), "rate");
         if (optionalRateParam.isEmpty()) {
             throw new ValidationException("bad rate parameter for updating exchangeRate");
         }
-        String baseCurrencyCode = getBaseCurrencyCode(req);
-        String targetCurrencyCode = getTargetCurrencyCode(req);
+        String baseCurrencyCode = RequestUtils.getBaseCurrencyCodeFromPath(req.getPathInfo());
+        String targetCurrencyCode = RequestUtils.getTargetCurrencyCodeFromPath(req.getPathInfo());
         String rateParam = optionalRateParam.get();
-        BigDecimal rate  = RequestUtils.convertToBigDecimal(rateParam, "bad rate parameter for updating exchangeRate");
+        BigDecimal rate = RequestUtils.convertToBigDecimal(rateParam, "bad rate parameter for updating exchangeRate");
         if (RequestUtils.isInvalid(baseCurrencyCode) || RequestUtils.isInvalid(targetCurrencyCode) || RequestUtils.isInvalid(rateParam)) {
             throw new ValidationException("bad parameters for updating exchangeRate");
         }
@@ -71,37 +69,5 @@ public class ExchangeRateServlet extends HttpServlet {
 
     }
 
-    private String getBaseCurrencyCode(HttpServletRequest request) {
-        if (request.getPathInfo() == null || request.getPathInfo().replace("/", "").isBlank()) {
-            return "";
-        }
-        return request.getPathInfo().trim().replace("/", "").substring(0, 3).toUpperCase();
-    }
 
-    private String getTargetCurrencyCode(HttpServletRequest request) {
-        if (request.getPathInfo() == null || request.getPathInfo().replace("/", "").isBlank()) {
-            return "";
-        }
-        return request.getPathInfo().trim().replace("/", "").substring(3).toUpperCase();
-    }
-
-
-    private Optional<String> getPatchParam(HttpServletRequest req, String name) throws IOException {
-
-        String body;
-        try (BufferedReader reader = req.getReader()) {
-            body = reader.lines().collect(Collectors.joining());
-        }
-
-        for (String pair : body.split("&")) {
-            String[] kv = pair.split("=", 2);
-            if (URLDecoder.decode(kv[0], StandardCharsets.UTF_8).equals(name)) {
-                if (kv.length > 1) {
-                    return Optional.of(URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
-                }
-                return Optional.of("");
-            }
-        }
-        return Optional.empty();
-    }
 }
