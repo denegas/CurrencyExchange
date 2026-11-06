@@ -34,13 +34,12 @@ public class CurrencyService {
     }
 
     public CurrencyResponseDto findByCode(String code) {
-        String validCaseCurrencyCode = currencyValidator.validateCode(code);
-        if (!currencyValidator.isValidCurrencyCode(validCaseCurrencyCode)) {
+        if (!currencyValidator.isValidCurrencyCode(code)) {
             throw new ValidationException("invalid currency's code!");
         }
-        Optional<Currency> optionalCurrency = currencyDao.findByCode(validCaseCurrencyCode);
+        Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
-            throw new NotFoundException("couldn't find currency with code: " + validCaseCurrencyCode);
+            throw new NotFoundException("couldn't find currency with code: " + code);
         }
         Currency currency = optionalCurrency.get();
         return currencyMapper.toDto(currency);

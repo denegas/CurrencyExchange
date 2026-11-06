@@ -5,5 +5,4 @@ import com.github.denegas.validator.Validator;
 
 public interface CurrencyValidator extends Validator<Currency> {
     boolean isValidCurrencyCode(String code);
-    String validateCode(String code);
 }

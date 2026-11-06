@@ -1,7 +1,6 @@
 package com.github.denegas.validator.currency;
 
 import com.github.denegas.entity.Currency;
-import com.github.denegas.exception.ValidationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,13 +24,6 @@ public class CurrencyValidatorImpl implements CurrencyValidator {
         return code.length() == CURRENCY_CODE_LENGTH && code.equals(code.toUpperCase()) && matcher.matches();
     }
 
-    @Override
-    public String validateCode(String code) {
-        if (code == null) {
-            throw new ValidationException("currency's code is null");
-        }
-        return code.trim().toUpperCase().replace("/", "");
-    }
 
     private boolean isValidCurrencyFullName(Currency currency) {
         return currency.getFullName() != null && !currency.getFullName().isBlank();
