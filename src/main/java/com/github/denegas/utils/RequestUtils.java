@@ -1,7 +1,6 @@
 package com.github.denegas.utils;
 
 import com.github.denegas.exception.ValidationException;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,14 +31,14 @@ public final class RequestUtils {
         if (isPathEmpty(path)) {
             return "";
         }
-        return cleanPath(path).substring(0, 3).toUpperCase();
+        return normalizePath(path).substring(0, 3).toUpperCase();
     }
 
     public static String getTargetCurrencyCodeFromPath(String path) {
         if (isPathEmpty(path)) {
             return "";
         }
-        return cleanPath(path).substring(3).toUpperCase();
+        return normalizePath(path).substring(3).toUpperCase();
     }
 
     public static Optional<String> getPatchParam(BufferedReader requestReader, String name) throws IOException {
@@ -64,7 +63,10 @@ public final class RequestUtils {
     public static boolean isPathEmpty(String path) {
         return path == null || path.replace("/", "").isBlank();
     }
-    private static String cleanPath(String path){
+    public static String normalizePath(String path) {
+        if (isPathEmpty(path)){
+            return "";
+        }
         return path.trim().replace("/","");
     }
 }

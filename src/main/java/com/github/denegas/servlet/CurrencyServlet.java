@@ -4,6 +4,7 @@ package com.github.denegas.servlet;
 import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.utils.Json;
+import com.github.denegas.utils.RequestUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,14 +27,9 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String currencyCode = getCurrencyCodeFromPath(req);
+        String currencyCode = RequestUtils.normalizePath(req.getPathInfo());
         CurrencyResponseDto currencyResponseDto = service.findByCode(currencyCode);
         Json.writeJson(resp, HttpServletResponse.SC_OK, currencyResponseDto);
-    }
-
-    private String getCurrencyCodeFromPath(HttpServletRequest request) {
-        String code = request.getPathInfo();
-        return code.replace("/", "");
     }
 
 }
