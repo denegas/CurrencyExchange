@@ -40,10 +40,12 @@ public class ExchangeRateService {
         String baseCurrencyCode = exchangeRateRequestDto.baseCurrencyCode();
         String targetCurrencyCode = exchangeRateRequestDto.targetCurrencyCode();
 
-        ExchangeRate creatingRate = new ExchangeRate();
-        creatingRate.setRate(exchangeRateRequestDto.rate());
-        creatingRate.setBaseCurrency(new Currency(baseCurrencyCode, null, null));
-        creatingRate.setTargetCurrency(new Currency(targetCurrencyCode, null, null));
+        ExchangeRate creatingRate = new ExchangeRate(
+                new Currency(baseCurrencyCode),
+                new Currency(targetCurrencyCode),
+                exchangeRateRequestDto.rate()
+        );
+
 
         ExchangeRate createdRate = dao.insert(creatingRate);
 
