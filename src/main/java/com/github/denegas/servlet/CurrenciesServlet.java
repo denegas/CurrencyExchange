@@ -36,7 +36,7 @@ public class CurrenciesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CurrencyRequestDto creatingCurrency = new CurrencyRequestDto(req.getParameter("code"),
-                req.getParameter("fullName"),
+                req.getParameter("name"),
                 req.getParameter("sign"));
         CurrencyResponseDto createdCurrency = service.insert(creatingCurrency);
         Json.writeJson(resp, HttpServletResponse.SC_CREATED, createdCurrency);
