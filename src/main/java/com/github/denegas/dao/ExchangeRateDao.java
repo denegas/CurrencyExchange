@@ -2,6 +2,7 @@ package com.github.denegas.dao;
 
 import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
+import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.exception.DbException;
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.utils.DbWork;
@@ -142,10 +143,11 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
                 } else {
                     throw new DbException("insert failed, have no id to return");
                 }
-
             }
-
         } catch (SQLException e) {
+            if (DbWork.isUniqueConstraintViolated(e)){
+                throw new AlreadyExistsException("creating exchange rate already exists");
+            }
             throw new DbException("error while inserting", e);
         }
         try (Connection connection = DbWork.connect(url);
@@ -184,10 +186,6 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
         } catch (SQLException e) {
             throw new DbException("error while updating", e);
         }
-    }
-
-    public boolean existsRate(String baseCurrencyCode, String targetCurrencyCode) {
-        return findByCodes(baseCurrencyCode, targetCurrencyCode).isPresent();
     }
 
 

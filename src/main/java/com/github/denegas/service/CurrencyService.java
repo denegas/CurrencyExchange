@@ -27,10 +27,8 @@ public class CurrencyService {
         if (!currencyValidator.isValid(currency)) {
             throw new ValidationException("invalid currency to create");
         }
-        if (currencyDao.existsByCode(currency.getCode())) {
-            throw new AlreadyExistsException("creating currency already exists");
-        }
         Currency createdCurrency = currencyDao.insert(currency);
+
         return currencyMapper.toDto(createdCurrency);
 
     }

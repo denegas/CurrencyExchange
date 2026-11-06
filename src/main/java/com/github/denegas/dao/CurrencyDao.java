@@ -2,6 +2,7 @@ package com.github.denegas.dao;
 
 
 import com.github.denegas.entity.Currency;
+import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.exception.DbException;
 import com.github.denegas.utils.DbWork;
 
@@ -70,12 +71,11 @@ public class CurrencyDao implements Dao<Currency> {
             }
 
         } catch (SQLException e) {
+            if (DbWork.isUniqueConstraintViolated(e)) {
+                throw new AlreadyExistsException("creating currency already exists");
+            }
             throw new DbException("error while inserting currency", e);
         }
-    }
-
-    public boolean existsByCode(String code) {
-        return findByCode(code).isPresent();
     }
 
 
