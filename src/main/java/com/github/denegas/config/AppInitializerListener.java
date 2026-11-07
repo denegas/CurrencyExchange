@@ -31,11 +31,11 @@ public class AppInitializerListener implements ServletContextListener {
 
         ExchangeRateDao exchangeRateDao = new ExchangeRateDao(DatabaseInitializerListener.DB_URL);
         ExchangeRateMapper exchangeRateMapper = new ExchangeRateMapperImpl();
-        ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidatorImpl();
+        ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidatorImpl(currencyValidator);
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, exchangeRateMapper, exchangeRateValidator);
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
 
-        ExchangeValidator exchangeValidator = new ExchangeValidatorImpl();
+        ExchangeValidator exchangeValidator = new ExchangeValidatorImpl(currencyValidator);
         ExchangeService exchangeService = new ExchangeService(exchangeRateDao, currencyDao, exchangeValidator);
         sce.getServletContext().setAttribute("exchangeService", exchangeService);
     }

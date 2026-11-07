@@ -2,38 +2,46 @@ package com.github.denegas.validator.exchangerate;
 
 
 import com.github.denegas.dto.ExchangeRateRequestDto;
+import com.github.denegas.exception.ValidationException;
+import com.github.denegas.utils.ValidatorUtils;
 import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
+
+import java.math.BigDecimal;
+import java.util.Objects;
 
 public class ExchangeRateValidatorImpl implements ExchangeRateValidator {
-    CurrencyValidator currencyValidator = new CurrencyValidatorImpl();
+    private final CurrencyValidator currencyValidator;
+
+    public ExchangeRateValidatorImpl(CurrencyValidator currencyValidator) {
+        this.currencyValidator = currencyValidator;
+    }
 
     @Override
-    public boolean isValid(ExchangeRateRequestDto requestDto) {
-        if (requestDto == null || requestDto.baseCurrencyCode() == null || requestDto.targetCurrencyCode() == null
-                || requestDto.rate() == null) {
-            return false;
+    public void validate(ExchangeRateRequestDto requestDto) {
+        if (requestDto == null) {
+            throw new ValidationException("request body is required");
         }
-        if (isSameCurrencies(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode())) {
-            return false;
+        if (ValidatorUtils.isEmptyParameter(requestDto.baseCurrencyCode())
+                || ValidatorUtils.isEmptyParameter(requestDto.targetCurrencyCode()) || requestDto.rate() == null) {
+            throw new ValidationException("exchange rate parameters should not be empty");
         }
+        String baseCode = requestDto.baseCurrencyCode();
+        String targetCode = requestDto.targetCurrencyCode();
+        BigDecimal rate = requestDto.rate();
 
-        return currencyValidator.isValidCurrencyCode(requestDto.baseCurrencyCode())
-                && currencyValidator.isValidCurrencyCode(requestDto.targetCurrencyCode());
-
+        if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("rate must be greater than zero");
+        }
+        if (Objects.equals(baseCode, targetCode)) {
+            throw new ValidationException("currencies must be different");
+        }
+        if (!isValidBaseTargetCodes(baseCode, targetCode)) {
+            throw new ValidationException("invalid currencies codes");
+        }
     }
 
-    public boolean isValidForFind(ExchangeRateRequestDto requestDto) {
-        if (requestDto == null || requestDto.baseCurrencyCode() == null || requestDto.targetCurrencyCode() == null) {
-            return false;
-        }
-        boolean isValidBaseCode = currencyValidator.isValidCurrencyCode(requestDto.baseCurrencyCode());
-        boolean isValidTargetCode = currencyValidator.isValidCurrencyCode(requestDto.targetCurrencyCode());
-
-        return isValidBaseCode && isValidTargetCode;
+    private boolean isValidBaseTargetCodes(String baseCode, String targetCode) {
+        return currencyValidator.isValidCurrencyCode(baseCode) && currencyValidator.isValidCurrencyCode(targetCode);
     }
 
-    private boolean isSameCurrencies(String baseCode, String targetCode) {
-        return baseCode.equals(targetCode);
-    }
 }

@@ -7,7 +7,6 @@ import com.github.denegas.dto.ExchangeResponseDto;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.exception.NotFoundException;
-import com.github.denegas.exception.ValidationException;
 import com.github.denegas.validator.exchange.ExchangeValidator;
 
 import java.math.BigDecimal;
@@ -18,6 +17,7 @@ public class ExchangeService {
     private static final String USD_CODE = "USD";
     private static final int RATE_SCALE = 2;
     private static final int AMOUNT_SCALE = 2;
+
     private final ExchangeRateDao exchangeRateDao;
     private final CurrencyDao currencyDao;
     private final ExchangeValidator validator;
@@ -29,9 +29,7 @@ public class ExchangeService {
     }
 
     public ExchangeResponseDto exchange(ExchangeRequestDto requestDto) {
-        if (!validator.isValid(requestDto)) {
-            throw new ValidationException("invalid values for exchange");
-        }
+        validator.validate(requestDto);
         String baseCurrencyCode = requestDto.baseCurrencyCode();
         String targetCurrencyCode = requestDto.targetCurrencyCode();
 

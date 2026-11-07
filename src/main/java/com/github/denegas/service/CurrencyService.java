@@ -24,9 +24,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto insert(CurrencyRequestDto currencyRequestDto) {
         Currency currency = currencyMapper.toEntity(currencyRequestDto);
-        if (!currencyValidator.isValid(currency)) {
-            throw new ValidationException("invalid currency to create");
-        }
+        currencyValidator.validate(currency);
         Currency createdCurrency = currencyDao.insert(currency);
 
         return currencyMapper.toDto(createdCurrency);
