@@ -41,9 +41,6 @@ public class ExchangeServlet extends HttpServlet {
         String targetCurrencyCode = req.getParameter("to");
         String amountParam = req.getParameter("amount");
 
-        if (ValidatorUtils.isEmptyParameter(baseCurrencyCode) || ValidatorUtils.isEmptyParameter(targetCurrencyCode) || ValidatorUtils.isEmptyParameter(amountParam)) {
-            throw new ValidationException("bad parameters for exchange");
-        }
         BigDecimal amount = RequestUtils.convertToBigDecimal(amountParam, "Invalid amount parameter");
         return new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
 

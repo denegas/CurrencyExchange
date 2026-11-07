@@ -59,9 +59,6 @@ public class ExchangeRateServlet extends HttpServlet {
         String targetCurrencyCode = RequestUtils.getTargetCurrencyCodeFromPath(req.getPathInfo());
         String rateParam = optionalRateParam.get();
         BigDecimal rate = RequestUtils.convertToBigDecimal(rateParam, "bad rate parameter for updating exchangeRate");
-        if (ValidatorUtils.isEmptyParameter(baseCurrencyCode) || ValidatorUtils.isEmptyParameter(targetCurrencyCode) || ValidatorUtils.isEmptyParameter(rateParam)) {
-            throw new ValidationException("bad parameters for updating exchangeRate");
-        }
 
         ExchangeRateRequestDto requestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
 

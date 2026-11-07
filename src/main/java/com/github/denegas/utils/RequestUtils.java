@@ -16,6 +16,9 @@ public final class RequestUtils {
     }
 
     public static BigDecimal convertToBigDecimal(String param, String messageOnException) {
+        if (param == null || param.isBlank()) {
+            return null;
+        }
         try {
             return new BigDecimal(param);
         } catch (NumberFormatException e) {
@@ -59,10 +62,11 @@ public final class RequestUtils {
     public static boolean isPathEmpty(String path) {
         return path == null || path.replace("/", "").isBlank();
     }
+
     public static String normalizePath(String path) {
-        if (isPathEmpty(path)){
+        if (isPathEmpty(path)) {
             return "";
         }
-        return path.trim().replace("/","");
+        return path.trim().replace("/", "");
     }
 }
