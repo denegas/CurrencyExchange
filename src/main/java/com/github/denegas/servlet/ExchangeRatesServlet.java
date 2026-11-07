@@ -6,6 +6,7 @@ import com.github.denegas.exception.ValidationException;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.utils.Json;
 import com.github.denegas.utils.RequestUtils;
+import com.github.denegas.utils.ValidatorUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -48,7 +49,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rateParam = req.getParameter("rate");
 
-        if (RequestUtils.isInvalid(baseCurrencyCode) || RequestUtils.isInvalid(targetCurrencyCode) || RequestUtils.isInvalid(rateParam)) {
+        if (ValidatorUtils.isEmptyParameter(baseCurrencyCode) || ValidatorUtils.isEmptyParameter(targetCurrencyCode) || ValidatorUtils.isEmptyParameter(rateParam)) {
             throw new ValidationException("bad parameters for creating exchangeRate");
         }
         BigDecimal rate = RequestUtils.convertToBigDecimal(rateParam, "Invalid rate for creating exchangeRate");

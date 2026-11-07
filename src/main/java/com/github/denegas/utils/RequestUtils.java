@@ -15,10 +15,6 @@ public final class RequestUtils {
 
     }
 
-    public static boolean isInvalid(String param) {
-        return param == null || param.isBlank();
-    }
-
     public static BigDecimal convertToBigDecimal(String param, String messageOnException) {
         try {
             return new BigDecimal(param);
