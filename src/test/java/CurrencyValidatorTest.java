@@ -17,82 +17,88 @@ public class CurrencyValidatorTest {
     }
 
     @Test
-    public void validateAcceptsValidCurrency() {
+    void validateAcceptsValidCurrency() {
         Currency validCurrency = new Currency("USD", "Dollar", "$");
         assertDoesNotThrow(() -> validator.validate(validCurrency));
     }
 
     @Test
-    public void validateChecksNull() {
+    void validateChecksNull() {
         assertThrows(ValidationException.class, () -> validator.validate(null));
     }
 
     @Test
-    public void validateChecksEmptyCode() {
+    void validateChecksEmptyCode() {
         Currency emptyCodeCurrency = new Currency(" ", "Dollar", "$");
         assertThrows(ValidationException.class, () -> validator.validate(emptyCodeCurrency));
     }
 
     @Test
-    public void validateChecksEmptyName() {
+    void validateChecksEmptyName() {
         Currency emptyNameCurrency = new Currency("USD", " ", "$");
         assertThrows(ValidationException.class, () -> validator.validate(emptyNameCurrency));
     }
 
     @Test
-    public void validateChecksEmptySign() {
+    void validateChecksEmptySign() {
         Currency emptySignCurrency = new Currency("USD", "Dollar", " ");
         assertThrows(ValidationException.class, () -> validator.validate(emptySignCurrency));
     }
 
     @Test
-    public void validateChecksNullCode() {
+    void validateChecksNullCode() {
         Currency nullCodeCurrency = new Currency(null, "Dollar", "$");
         assertThrows(ValidationException.class, () -> validator.validate(nullCodeCurrency));
     }
 
     @Test
-    public void validateChecksNullName() {
+    void validateChecksNullName() {
         Currency nullNameCurrency = new Currency("USD", null, "$");
         assertThrows(ValidationException.class, () -> validator.validate(nullNameCurrency));
     }
 
     @Test
-    public void validateChecksNullSign() {
+    void validateChecksNullSign() {
         Currency nullSignCurrency = new Currency("USD", "Dollar", null);
         assertThrows(ValidationException.class, () -> validator.validate(nullSignCurrency));
     }
 
     @Test
-    public void validateChecksCodeUpperCase() {
+    void validateChecksCodeUpperCase() {
         Currency lowerCaseCode = new Currency("usd", "Dollar", "$");
         assertThrows(ValidationException.class, () -> validator.validate(lowerCaseCode));
     }
 
     @Test
-    public void validateChecksShortCodeLength() {
+    void validateChecksShortCodeLength() {
         Currency tooShortCode = new Currency("US", "Dollar", "$");
         assertThrows(ValidationException.class, () -> validator.validate(tooShortCode));
     }
 
     @Test
-    public void validateChecksLongCodeLength() {
+    void validateChecksLongCodeLength() {
         Currency tooLongCode = new Currency("USDD", "Dollar", "$");
         assertThrows(ValidationException.class, () -> validator.validate(tooLongCode));
     }
 
     @Test
-    public void validateChecksLongNameLength() {
+    void validateChecksLongNameLength() {
         String longName = "A".repeat(65);
         Currency tooLongName = new Currency("USD", longName, "$");
         assertThrows(ValidationException.class, () -> validator.validate(tooLongName));
     }
 
     @Test
-    public void validateChecksLongSignLength() {
+    void validateChecksLongSignLength() {
         String longSign = "&".repeat(7);
         Currency tooLongSign = new Currency("USD", "Dollar", longSign);
         assertThrows(ValidationException.class, () -> validator.validate(tooLongSign));
+    }
+
+    @Test
+    void validateDoesNotThrowOnValidValue() {
+        Currency validCurrency = new Currency("USD", "Dollar", "$");
+        assertDoesNotThrow(() -> validator.validate(validCurrency));
     }
 
 }

@@ -5,6 +5,7 @@ import com.github.denegas.validator.currency.CurrencyValidatorImpl;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidatorImpl;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -66,5 +67,11 @@ public class ExchangeRateValidatorTest {
     void validateThrowsOnInvalidCurrencyCodes(String invalidCode) {
         ExchangeRateRequestDto requestDto = new ExchangeRateRequestDto(invalidCode, "XXX", BigDecimal.ONE);
         assertThrows(ValidationException.class, () -> validator.validate(requestDto));
+    }
+
+    @Test
+    void validateDoesNotThrowOnValidValue() {
+        ExchangeRateRequestDto validRequestDto = new ExchangeRateRequestDto("USD", "RUB", BigDecimal.ONE);
+        assertDoesNotThrow(() -> validator.validate(validRequestDto));
     }
 }

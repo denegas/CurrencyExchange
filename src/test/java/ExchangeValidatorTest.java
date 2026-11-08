@@ -54,7 +54,7 @@ public class ExchangeValidatorTest {
     }
 
     @Test
-    void validateAcceptsValidExchange() {
+    void validateDoesNotThrowOnValidValue() {
         ExchangeRequestDto validExchange = new ExchangeRequestDto("USD", "RUB", new BigDecimal(70));
         assertDoesNotThrow(() -> validator.validate(validExchange));
     }
