@@ -1,5 +1,7 @@
 package com.github.denegas.entity;
 
+import java.util.Objects;
+
 public class Currency {
     private Long id;
     private String code;
@@ -55,5 +57,25 @@ public class Currency {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || other.getClass() != this.getClass()){
+            return false;
+        }
+        Currency otherCurrency = (Currency) other;
+        return Objects.equals(this.id, otherCurrency.getId())
+                && Objects.equals(this.code, otherCurrency.getCode())
+                && Objects.equals(this.fullName, otherCurrency.getFullName())
+                && Objects.equals(this.sign, otherCurrency.sign);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, code, fullName, sign);
     }
 }
