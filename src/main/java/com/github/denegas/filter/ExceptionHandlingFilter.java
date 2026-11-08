@@ -26,9 +26,7 @@ public class ExceptionHandlingFilter implements Filter {
             Json.writeJson(resp, HttpServletResponse.SC_BAD_REQUEST, Map.of("message", e.getMessage()));
         } catch (NotFoundException e) {
             Json.writeJson(resp, HttpServletResponse.SC_NOT_FOUND, Map.of("message", e.getMessage()));
-        } catch (NothingThereException e) {
-            Json.writeJson(resp, HttpServletResponse.SC_OK, Map.of("message", e.getMessage()));
-        } catch (AlreadyExistsException e) {
+        }  catch (AlreadyExistsException e) {
             Json.writeJson(resp, HttpServletResponse.SC_CONFLICT, Map.of("message", e.getMessage()));
         } catch (DbException e) {
             logger.log(Level.SEVERE, "db error: ", e);

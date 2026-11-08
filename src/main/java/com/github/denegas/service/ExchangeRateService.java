@@ -6,7 +6,6 @@ import com.github.denegas.dto.ExchangeRateResponseDto;
 import com.github.denegas.entity.Currency;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.exception.NotFoundException;
-import com.github.denegas.exception.NothingThereException;
 import com.github.denegas.mapper.exchangerate.ExchangeRateMapper;
 import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
 
@@ -26,9 +25,7 @@ public class ExchangeRateService {
 
     public List<ExchangeRateResponseDto> getAllRates() {
         List<ExchangeRate> rates = dao.getAll();
-        if (rates.isEmpty()) {
-            throw new NothingThereException("couldn't find any exchange rate");
-        }
+
         return mapper.toDtoList(rates);
     }
 

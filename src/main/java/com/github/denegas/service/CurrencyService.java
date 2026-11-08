@@ -46,9 +46,7 @@ public class CurrencyService {
 
     public List<CurrencyResponseDto> getAll() {
         List<Currency> currencies = currencyDao.getAll();
-        if (currencies.isEmpty()) {
-            throw new NothingThereException("couldn't find any currency");
-        }
+
         return currencyMapper.toDtoList(currencies);
     }
 }
