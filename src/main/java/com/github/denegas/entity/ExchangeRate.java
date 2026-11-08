@@ -1,6 +1,7 @@
 package com.github.denegas.entity;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class ExchangeRate {
     private Long id;
@@ -55,5 +56,25 @@ public class ExchangeRate {
 
     public void setRate(BigDecimal rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || other.getClass() != this.getClass()) {
+            return false;
+        }
+        ExchangeRate otherRate = (ExchangeRate) other;
+        return Objects.equals(this.id, otherRate.getId())
+                && Objects.equals(this.baseCurrency, otherRate.getBaseCurrency())
+                && Objects.equals(this.targetCurrency, otherRate.getTargetCurrency())
+                && (this.rate == null) ? (otherRate.getRate() == null) : this.rate.compareTo(otherRate.getRate()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id, this.baseCurrency, this.targetCurrency, this.rate);
     }
 }
