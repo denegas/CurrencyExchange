@@ -2,9 +2,6 @@ package com.github.denegas.config;
 
 import com.github.denegas.dao.CurrencyDao;
 import com.github.denegas.dao.ExchangeRateDao;
-import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.mapper.exchangerate.ExchangeRateMapper;
-import com.github.denegas.mapper.exchangerate.ExchangeRateMapperImpl;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.service.ExchangeRateService;
 import com.github.denegas.service.ExchangeService;
@@ -28,9 +25,8 @@ public class AppInitializerListener implements ServletContextListener {
         sce.getServletContext().setAttribute("currencyService", currencyService);
 
         ExchangeRateDao exchangeRateDao = new ExchangeRateDao(DatabaseInitializerListener.DB_URL);
-        ExchangeRateMapper exchangeRateMapper = new ExchangeRateMapperImpl();
         ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidatorImpl(currencyValidator);
-        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao, exchangeRateMapper, exchangeRateValidator);
+        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao,  exchangeRateValidator);
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
 
         ExchangeValidator exchangeValidator = new ExchangeValidatorImpl(currencyValidator);
