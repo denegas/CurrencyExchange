@@ -42,10 +42,7 @@ public final class RequestUtils {
 
     public static Optional<String> getPatchParam(BufferedReader requestReader, String name) throws IOException {
 
-        String body;
-        try (BufferedReader reader = requestReader) {
-            body = reader.lines().collect(Collectors.joining());
-        }
+        String body = requestReader.lines().collect(Collectors.joining());
 
         for (String pair : body.split("&")) {
             String[] kv = pair.split("=", 2);
