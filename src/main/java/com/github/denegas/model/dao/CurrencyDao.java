@@ -2,10 +2,10 @@ package com.github.denegas.model.dao;
 
 
 import com.github.denegas.config.DatabaseConnector;
+import com.github.denegas.exception.SqliteExceptionUtils;
 import com.github.denegas.model.entity.Currency;
 import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.exception.DbException;
-import com.github.denegas.model.utils.DbWork;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class CurrencyDao implements Dao<Currency> {
             }
 
         } catch (SQLException e) {
-            if (DbWork.isUniqueConstraintViolated(e)) {
+            if (SqliteExceptionUtils.isUniqueConstraintViolated(e)) {
                 throw new AlreadyExistsException("creating currency already exists");
             }
             throw new DbException("error while inserting currency", e);
