@@ -112,9 +112,10 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
 
     public Optional<ExchangeRate> findByCodes(String baseCurrencyCode, String targetCurrencyCode) {
         try (Connection connection = DatabaseConnector.connect(url);
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_BY_BASE_TARGET_CODES)) {
-            DbWork.setPreparedStatementParameters(preparedStatement, baseCurrencyCode, targetCurrencyCode);
-            ResultSet resultSet = preparedStatement.executeQuery();
+             PreparedStatement ps = connection.prepareStatement(GET_BY_BASE_TARGET_CODES)) {
+            ps.setString(1, baseCurrencyCode);
+            ps.setString(2, targetCurrencyCode);
+            ResultSet resultSet = ps.executeQuery();
 
             return getExchangeRateFromResultSet(resultSet);
         } catch (SQLException e) {
@@ -129,16 +130,17 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
         Currency targetCurrency;
 
         try (Connection connection = DatabaseConnector.connect(url);
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
             String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
 
-            DbWork.setPreparedStatementParameters(preparedStatement, exchangeRate.getRate(),
-                    baseCurrencyCode, targetCurrencyCode);
+            ps.setBigDecimal(1, exchangeRate.getRate());
+            ps.setString(2, baseCurrencyCode);
+            ps.setString(3, targetCurrencyCode);
 
-            preparedStatement.executeUpdate();
+            ps.executeUpdate();
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     exchangeRateId = generatedKeys.getLong(1);
                 } else {
@@ -146,7 +148,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
                 }
             }
         } catch (SQLException e) {
-            if (DbWork.isUniqueConstraintViolated(e)){
+            if (DbWork.isUniqueConstraintViolated(e)) {
                 throw new AlreadyExistsException("creating exchange rate already exists");
             }
             throw new DbException("error while inserting", e);
@@ -157,8 +159,8 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
 
             try (ResultSet currencies = preparedStatement.executeQuery()) {
                 if (currencies.next()) {
-                    baseCurrency = mapRowToCurrency(currencies,BASE_CURRENCY_NAME);
-                    targetCurrency = mapRowToCurrency(currencies,TARGET_CURRENCY_NAME);
+                    baseCurrency = mapRowToCurrency(currencies, BASE_CURRENCY_NAME);
+                    targetCurrency = mapRowToCurrency(currencies, TARGET_CURRENCY_NAME);
                     return new ExchangeRate(exchangeRateId,
                             baseCurrency, targetCurrency,
                             exchangeRate.getRate());
@@ -175,13 +177,15 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
 
     public boolean update(ExchangeRate exchangeRate) {
         try (Connection connection = DatabaseConnector.connect(url);
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
+             PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY)) {
             String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
             String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
 
-            DbWork.setPreparedStatementParameters(preparedStatement, exchangeRate.getRate(), baseCurrencyCode, targetCurrencyCode);
+            ps.setBigDecimal(1, exchangeRate.getRate());
+            ps.setString(2, baseCurrencyCode);
+            ps.setString(3,targetCurrencyCode);
 
-            int rowsAffected = preparedStatement.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
 
             return rowsAffected > 0;
         } catch (SQLException e) {

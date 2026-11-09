@@ -48,7 +48,7 @@ public class CurrencyDao implements Dao<Currency> {
         try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY)) {
 
-            DbWork.setPreparedStatementParameters(ps, code);
+            ps.setString(1, code);
             ResultSet rs = ps.executeQuery();
 
             return getCurrencyFromResultSet(rs);
@@ -63,7 +63,9 @@ public class CurrencyDao implements Dao<Currency> {
         try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
-            DbWork.setPreparedStatementParameters(ps, currency.getCode(), currency.getFullName(), currency.getSign());
+            ps.setString(1, currency.getCode());
+            ps.setString(2, currency.getFullName());
+            ps.setString(3, currency.getSign());
             ps.executeUpdate();
             try (ResultSet resultSet = ps.getGeneratedKeys()) {
                 long id = getCreatedCurrencyId(resultSet);
