@@ -4,13 +4,12 @@ import com.github.denegas.dto.CurrencyResponseDto;
 import com.github.denegas.dto.ExchangeRateResponseDto;
 import com.github.denegas.entity.ExchangeRate;
 import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.mapper.currency.CurrencyMapperImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeRateMapperImpl implements ExchangeRateMapper {
-    CurrencyMapper currencyMapper = new CurrencyMapperImpl();
+    CurrencyMapper CURRENCY_MAPPER = CurrencyMapper.INSTANCE;
 
     @Override
     public List<ExchangeRateResponseDto> toDtoList(List<ExchangeRate> rates) {
@@ -29,8 +28,8 @@ public class ExchangeRateMapperImpl implements ExchangeRateMapper {
         if (exchangeRate == null) {
             return null;
         }
-        CurrencyResponseDto baseCurrencyDto = currencyMapper.toDto(exchangeRate.getBaseCurrency());
-        CurrencyResponseDto targetCurrencyDto = currencyMapper.toDto(exchangeRate.getTargetCurrency());
+        CurrencyResponseDto baseCurrencyDto = CURRENCY_MAPPER.toDto(exchangeRate.getBaseCurrency());
+        CurrencyResponseDto targetCurrencyDto = CURRENCY_MAPPER.toDto(exchangeRate.getTargetCurrency());
 
         return new ExchangeRateResponseDto(exchangeRate.getId(),
                 baseCurrencyDto,

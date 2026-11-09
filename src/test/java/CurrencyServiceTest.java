@@ -2,7 +2,6 @@
 import com.github.denegas.dao.CurrencyDao;
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.mapper.currency.CurrencyMapperImpl;
 import com.github.denegas.service.CurrencyService;
 import com.github.denegas.validator.currency.CurrencyValidator;
 import com.github.denegas.validator.currency.CurrencyValidatorImpl;
@@ -20,14 +19,11 @@ public class CurrencyServiceTest {
     private CurrencyService service;
     private CurrencyDao dao;
     private CurrencyValidator validator;
-    private CurrencyMapper mapper;
-
     @BeforeEach
     void setUp() {
         dao = mock(CurrencyDao.class);
         validator = new CurrencyValidatorImpl();
-        mapper = new CurrencyMapperImpl();
-        service = new CurrencyService(dao, mapper, validator);
+        service = new CurrencyService(dao, validator);
     }
 
     @Test

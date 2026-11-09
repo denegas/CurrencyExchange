@@ -3,7 +3,6 @@ package com.github.denegas.config;
 import com.github.denegas.dao.CurrencyDao;
 import com.github.denegas.dao.ExchangeRateDao;
 import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.mapper.currency.CurrencyMapperImpl;
 import com.github.denegas.mapper.exchangerate.ExchangeRateMapper;
 import com.github.denegas.mapper.exchangerate.ExchangeRateMapperImpl;
 import com.github.denegas.service.CurrencyService;
@@ -24,9 +23,8 @@ public class AppInitializerListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         CurrencyDao currencyDao = new CurrencyDao(DatabaseInitializerListener.DB_URL);
-        CurrencyMapper currencyMapper = new CurrencyMapperImpl();
         CurrencyValidator currencyValidator = new CurrencyValidatorImpl();
-        CurrencyService currencyService = new CurrencyService(currencyDao, currencyMapper, currencyValidator);
+        CurrencyService currencyService = new CurrencyService(currencyDao, currencyValidator);
         sce.getServletContext().setAttribute("currencyService", currencyService);
 
         ExchangeRateDao exchangeRateDao = new ExchangeRateDao(DatabaseInitializerListener.DB_URL);

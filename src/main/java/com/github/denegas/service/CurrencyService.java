@@ -12,22 +12,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class CurrencyService {
+    private static final CurrencyMapper CURRENCY_MAPPER_INSTANCE = CurrencyMapper.INSTANCE;
+
     private final CurrencyDao currencyDao;
-    private final CurrencyMapper currencyMapper;
     private final CurrencyValidator currencyValidator;
 
-    public CurrencyService(CurrencyDao dao, CurrencyMapper currencyMapper, CurrencyValidator validator) {
+    public CurrencyService(CurrencyDao dao, CurrencyValidator validator) {
         this.currencyDao = dao;
-        this.currencyMapper = currencyMapper;
+
         this.currencyValidator = validator;
     }
 
     public CurrencyResponseDto insert(CurrencyRequestDto currencyRequestDto) {
-        Currency currency = currencyMapper.toEntity(currencyRequestDto);
+        Currency currency = CURRENCY_MAPPER_INSTANCE.toEntity(currencyRequestDto);
         currencyValidator.validate(currency);
         Currency createdCurrency = currencyDao.insert(currency);
 
-        return currencyMapper.toDto(createdCurrency);
+        return CURRENCY_MAPPER_INSTANCE.toDto(createdCurrency);
 
     }
 
@@ -40,13 +41,13 @@ public class CurrencyService {
             throw new NotFoundException("couldn't find currency with code: " + code);
         }
         Currency currency = optionalCurrency.get();
-        return currencyMapper.toDto(currency);
+        return CURRENCY_MAPPER_INSTANCE.toDto(currency);
 
     }
 
     public List<CurrencyResponseDto> getAll() {
         List<Currency> currencies = currencyDao.getAll();
 
-        return currencyMapper.toDtoList(currencies);
+        return CURRENCY_MAPPER_INSTANCE.toDtoList(currencies);
     }
 }
