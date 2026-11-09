@@ -1,10 +1,9 @@
-import com.github.denegas.dto.ExchangeRequestDto;
-import com.github.denegas.dto.ExchangeResponseDto;
+import com.github.denegas.model.dto.ExchangeRequestDto;
 import com.github.denegas.exception.ValidationException;
-import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
-import com.github.denegas.validator.exchange.ExchangeValidator;
-import com.github.denegas.validator.exchange.ExchangeValidatorImpl;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
+import com.github.denegas.model.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.model.validator.exchange.ExchangeValidator;
+import com.github.denegas.model.validator.exchange.ExchangeValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

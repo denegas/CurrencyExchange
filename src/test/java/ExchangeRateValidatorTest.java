@@ -1,9 +1,9 @@
-import com.github.denegas.dto.ExchangeRateRequestDto;
+import com.github.denegas.model.dto.ExchangeRateRequestDto;
 import com.github.denegas.exception.ValidationException;
-import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
-import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
-import com.github.denegas.validator.exchangerate.ExchangeRateValidatorImpl;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
+import com.github.denegas.model.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.model.validator.exchangerate.ExchangeRateValidator;
+import com.github.denegas.model.validator.exchangerate.ExchangeRateValidatorImpl;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -1,16 +1,16 @@
 package com.github.denegas.config;
 
-import com.github.denegas.dao.CurrencyDao;
-import com.github.denegas.dao.ExchangeRateDao;
-import com.github.denegas.service.CurrencyService;
-import com.github.denegas.service.ExchangeRateService;
-import com.github.denegas.service.ExchangeService;
-import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
-import com.github.denegas.validator.exchange.ExchangeValidator;
-import com.github.denegas.validator.exchange.ExchangeValidatorImpl;
-import com.github.denegas.validator.exchangerate.ExchangeRateValidator;
-import com.github.denegas.validator.exchangerate.ExchangeRateValidatorImpl;
+import com.github.denegas.model.dao.CurrencyDao;
+import com.github.denegas.model.dao.ExchangeRateDao;
+import com.github.denegas.model.service.CurrencyService;
+import com.github.denegas.model.service.ExchangeRateService;
+import com.github.denegas.model.service.ExchangeService;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
+import com.github.denegas.model.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.model.validator.exchange.ExchangeValidator;
+import com.github.denegas.model.validator.exchange.ExchangeValidatorImpl;
+import com.github.denegas.model.validator.exchangerate.ExchangeRateValidator;
+import com.github.denegas.model.validator.exchangerate.ExchangeRateValidatorImpl;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;

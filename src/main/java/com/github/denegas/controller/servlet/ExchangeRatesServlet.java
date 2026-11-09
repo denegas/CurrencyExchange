@@ -1,0 +1,55 @@
+package com.github.denegas.controller.servlet;
+
+import com.github.denegas.model.dto.ExchangeRateRequestDto;
+import com.github.denegas.model.dto.ExchangeRateResponseDto;
+import com.github.denegas.model.service.ExchangeRateService;
+import com.github.denegas.controller.utils.JsonUtils;
+import com.github.denegas.controller.utils.RequestUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
+
+@WebServlet("/exchangeRates")
+public class ExchangeRatesServlet extends HttpServlet {
+    private ExchangeRateService service;
+
+    @Override
+    public void init() throws ServletException {
+        service = (ExchangeRateService) getServletConfig().getServletContext().getAttribute("exchangeRateService");
+        if (service == null) {
+            throw new ServletException("couldn't find exchange rate service");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<ExchangeRateResponseDto> dtoRates = service.getAllRates();
+        JsonUtils.writeJson(resp, HttpServletResponse.SC_OK, dtoRates);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        ExchangeRateRequestDto creatingRate = getRequestRate(req);
+        ExchangeRateResponseDto exchangeRateResponseDto = service.insert(creatingRate);
+
+        JsonUtils.writeJson(resp, HttpServletResponse.SC_CREATED, exchangeRateResponseDto);
+    }
+
+    private ExchangeRateRequestDto getRequestRate(HttpServletRequest req) {
+        String baseCurrencyCode = req.getParameter("baseCurrencyCode");
+        String targetCurrencyCode = req.getParameter("targetCurrencyCode");
+        String rateParam = req.getParameter("rate");
+
+        BigDecimal rate = RequestUtils.convertToBigDecimal(rateParam, "Invalid rate for creating exchangeRate");
+
+        return new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
+
+    }
+}

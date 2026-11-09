@@ -1,10 +1,9 @@
 
-import com.github.denegas.dao.CurrencyDao;
+import com.github.denegas.model.dao.CurrencyDao;
 import com.github.denegas.exception.NotFoundException;
-import com.github.denegas.mapper.currency.CurrencyMapper;
-import com.github.denegas.service.CurrencyService;
-import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.model.service.CurrencyService;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
+import com.github.denegas.model.validator.currency.CurrencyValidatorImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

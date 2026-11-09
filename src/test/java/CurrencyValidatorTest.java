@@ -1,7 +1,7 @@
-import com.github.denegas.entity.Currency;
+import com.github.denegas.model.entity.Currency;
 import com.github.denegas.exception.ValidationException;
-import com.github.denegas.validator.currency.CurrencyValidator;
-import com.github.denegas.validator.currency.CurrencyValidatorImpl;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
+import com.github.denegas.model.validator.currency.CurrencyValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
