@@ -1,5 +1,6 @@
 package com.github.denegas.model.dao;
 
+import com.github.denegas.config.DatabaseConnector;
 import com.github.denegas.model.entity.Currency;
 import com.github.denegas.model.entity.ExchangeRate;
 import com.github.denegas.exception.AlreadyExistsException;
@@ -98,7 +99,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
 
     @Override
     public List<ExchangeRate> getAll() {
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(GET_ALL_QUERY)) {
 
@@ -110,7 +111,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
     }
 
     public Optional<ExchangeRate> findByCodes(String baseCurrencyCode, String targetCurrencyCode) {
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(GET_BY_BASE_TARGET_CODES)) {
             DbWork.setPreparedStatementParameters(preparedStatement, baseCurrencyCode, targetCurrencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -127,7 +128,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
         Currency baseCurrency;
         Currency targetCurrency;
 
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
             String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();
@@ -150,7 +151,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
             }
             throw new DbException("error while inserting", e);
         }
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(GET_CURRENCIES_AFTER_CREATING)) {
             preparedStatement.setLong(1, exchangeRateId);
 
@@ -173,7 +174,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate> {
     }
 
     public boolean update(ExchangeRate exchangeRate) {
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY)) {
             String baseCurrencyCode = exchangeRate.getBaseCurrency().getCode();
             String targetCurrencyCode = exchangeRate.getTargetCurrency().getCode();

@@ -1,6 +1,7 @@
 package com.github.denegas.model.dao;
 
 
+import com.github.denegas.config.DatabaseConnector;
 import com.github.denegas.model.entity.Currency;
 import com.github.denegas.exception.AlreadyExistsException;
 import com.github.denegas.exception.DbException;
@@ -32,7 +33,7 @@ public class CurrencyDao implements Dao<Currency> {
 
     @Override
     public List<Currency> getAll() {
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_QUERY)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -44,7 +45,7 @@ public class CurrencyDao implements Dao<Currency> {
 
     public Optional<Currency> findByCode(String code) {
 
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement ps = connection.prepareStatement(GET_BY_CODE_QUERY)) {
 
             DbWork.setPreparedStatementParameters(ps, code);
@@ -59,7 +60,7 @@ public class CurrencyDao implements Dao<Currency> {
 
     @Override
     public Currency insert(Currency currency) {
-        try (Connection connection = DbWork.connect(url);
+        try (Connection connection = DatabaseConnector.connect(url);
              PreparedStatement ps = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             DbWork.setPreparedStatementParameters(ps, currency.getCode(), currency.getFullName(), currency.getSign());

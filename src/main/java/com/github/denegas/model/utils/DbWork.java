@@ -1,10 +1,6 @@
 package com.github.denegas.model.utils;
 
-import com.github.denegas.exception.DbException;
-
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -34,17 +30,7 @@ public final class DbWork {
         ps.setString(2, targetCurrencyCode);
     }
 
-    public static Connection connect(String url) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            return DriverManager.getConnection(url);
-        } catch (ClassNotFoundException e) {
-            throw new DbException("driver is not found", e);
-        } catch (SQLException e) {
-            throw new DbException("error while connecting", e);
-        }
 
-    }
     public static boolean isUniqueConstraintViolated(SQLException e){
         return e.getErrorCode() == 19 && e.getMessage() != null && e.getMessage().contains("UNIQUE");
     }
