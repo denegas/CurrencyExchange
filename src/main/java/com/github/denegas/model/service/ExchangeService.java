@@ -15,8 +15,8 @@ import java.util.Optional;
 
 public class ExchangeService {
     private static final String USD_CODE = "USD";
-    private static final int RATE_SCALE = 2;
-    private static final int AMOUNT_SCALE = 2;
+    private static final int RATE_SCALE = 6;
+    private static final int AMOUNT_SCALE = 6;
 
     private final ExchangeRateDao exchangeRateDao;
     private final CurrencyDao currencyDao;
@@ -92,7 +92,7 @@ public class ExchangeService {
     private Optional<ExchangeRate> getRateByTargetBase(String baseCurrencyCode, String targetCurrencyCode) {
         Optional<ExchangeRate> optionalTargetBaseRate = exchangeRateDao.findByCodes(targetCurrencyCode, baseCurrencyCode);
         if (optionalTargetBaseRate.isPresent()) {
-            BigDecimal rate = BigDecimal.ONE.divide(optionalTargetBaseRate.get().getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
+            BigDecimal rate = BigDecimal.ONE.divide(optionalTargetBaseRate.get().getRate(),RATE_SCALE,  RoundingMode.HALF_EVEN);
             ExchangeRate targetBaseRate = new ExchangeRate(
                     optionalTargetBaseRate.get().getBaseCurrency(),
                     optionalTargetBaseRate.get().getTargetCurrency(),
