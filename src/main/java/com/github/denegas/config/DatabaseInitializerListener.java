@@ -17,29 +17,47 @@ import java.sql.Statement;
 
 @WebListener
 public class DatabaseInitializerListener implements ServletContextListener {
-    public final static String DB_URL = "jdbc:sqlite:" + System.getProperty("user.home") + "/Database.db?foreign_keys=true";
+    public static final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.home") + "/Database.db?foreign_keys=true";
+    private static final String CREATE_CURRENCIES_QUERY = """
+            INSERT OR IGNORE INTO Currencies(code, full_name, sign)
+            VALUES
+                ("EUR", "Euro", "€"),
+                ("USD", "US Dollar", "$"),
+                ("GBP", "Pound Sterling", "£"),
+                ("JPY", "Yen", "¥"),
+                ("RUB", "Russian Ruble", "₽"),
+                ("CNY", "Yuan Renminbi", "¥"),
+                ("CHF", "Swiss Franc", "₣"),
+                ("CAD", "Canadian Dollar", "$"),
+                ("AUD", "Australian Dollar", "$"),
+                ("NZD", "New Zealand Dollar", "$"),
+                ("BYN", "Belarusian Ruble", "Br"),
+                ("UAH", "Hryvnia", "₴"),
+                ("KZT", "Tenge", "₸");
+            """;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         loadSqliteDriver();
 
-        String sql = getLinesFromResourceFile("schema.sql")
-                + getLinesFromResourceFile("indexes.sql");
+        String initSql = getLinesFromResourceFile("schema.sql")
+                + getLinesFromResourceFile("indexes.sql")
+                + CREATE_CURRENCIES_QUERY;
 
-        String[] queries = sql.split(";");
+        String[] queries = initSql.split(";");
 
         executeQueries(queries);
     }
 
-    private String getLinesFromResourceFile(String resourceFileName) {
+    private String getLinesFromResourceFile(String fileName) {
 
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceFileName)) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
             if (inputStream == null) {
-                throw new NoSuchFileException("couldn't find: " + resourceFileName);
+                throw new NoSuchFileException("couldn't find: " + fileName);
             }
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new DbException("error while read resource file", e);
+            throw new DbException("error while reading resource file", e);
         }
 
     }
@@ -69,7 +87,7 @@ public class DatabaseInitializerListener implements ServletContextListener {
 
             }
         } catch (SQLException e) {
-            throw new DbException("error while executeQueries",e);
+            throw new DbException("error while executeQueries", e);
         }
     }
 }
