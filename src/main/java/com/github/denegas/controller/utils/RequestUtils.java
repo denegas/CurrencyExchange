@@ -43,15 +43,18 @@ public final class RequestUtils {
     public static Optional<String> getPatchParam(BufferedReader requestReader, String name) throws IOException {
 
         String body = requestReader.lines().collect(Collectors.joining());
-
-        for (String pair : body.split("&")) {
-            String[] kv = pair.split("=", 2);
-            if (URLDecoder.decode(kv[0], StandardCharsets.UTF_8).equals(name)) {
-                if (kv.length > 1) {
-                    return Optional.of(URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
-                }
-                return Optional.of("");
+        String[] pairs = body.split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=", 2);
+            if (keyValue.length <= 1){
+                continue;
             }
+            String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
+            if (key.equals(name)) {
+                String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+                return Optional.of(value);
+            }
+                return Optional.of("");
         }
         return Optional.empty();
     }
