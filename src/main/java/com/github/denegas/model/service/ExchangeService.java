@@ -16,7 +16,6 @@ import java.util.Optional;
 public class ExchangeService {
     private static final String USD_CODE = "USD";
     private static final int RATE_SCALE = 6;
-    private static final int AMOUNT_SCALE = 6;
 
     private final ExchangeRateDao exchangeRateDao;
     private final CurrencyDao currencyDao;
@@ -33,10 +32,10 @@ public class ExchangeService {
         String baseCurrencyCode = requestDto.baseCurrencyCode();
         String targetCurrencyCode = requestDto.targetCurrencyCode();
 
-        BigDecimal amount = requestDto.amount().setScale(AMOUNT_SCALE, RoundingMode.HALF_EVEN);
+        BigDecimal amount = requestDto.amount();
         ExchangeRate rateInfo = getRateInfo(baseCurrencyCode, targetCurrencyCode);
         BigDecimal rate = rateInfo.getRate();
-        BigDecimal convertedAmount = calculateConvertedAmount(rate, amount).setScale(AMOUNT_SCALE, RoundingMode.HALF_EVEN);
+        BigDecimal convertedAmount = calculateConvertedAmount(rate, amount);
 
         return new ExchangeResponseDto(
                 rateInfo.getBaseCurrency(),
