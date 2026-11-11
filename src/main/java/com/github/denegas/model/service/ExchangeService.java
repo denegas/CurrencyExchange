@@ -60,7 +60,11 @@ public class ExchangeService {
         // if didn't find base-target rate
         Optional<ExchangeRate> optionalTargetBaseRate = getRateByTargetBase(baseCurrencyCode, targetCurrencyCode);
         if (optionalTargetBaseRate.isPresent()) {
-            return optionalTargetBaseRate.get();
+            return new ExchangeRate(optionalTargetBaseRate.get().getId(),
+                    //reverse targetCurrency-baseCurrency
+                    optionalTargetBaseRate.get().getTargetCurrency(),
+                    optionalTargetBaseRate.get().getBaseCurrency(),
+                    optionalTargetBaseRate.get().getRate());
         }
 
         // if didn't find target-base rate
@@ -92,7 +96,7 @@ public class ExchangeService {
     private Optional<ExchangeRate> getRateByTargetBase(String baseCurrencyCode, String targetCurrencyCode) {
         Optional<ExchangeRate> optionalTargetBaseRate = exchangeRateDao.findByCodes(targetCurrencyCode, baseCurrencyCode);
         if (optionalTargetBaseRate.isPresent()) {
-            BigDecimal rate = BigDecimal.ONE.divide(optionalTargetBaseRate.get().getRate(),RATE_SCALE,  RoundingMode.HALF_EVEN);
+            BigDecimal rate = BigDecimal.ONE.divide(optionalTargetBaseRate.get().getRate(), RATE_SCALE, RoundingMode.HALF_EVEN);
             ExchangeRate targetBaseRate = new ExchangeRate(
                     optionalTargetBaseRate.get().getBaseCurrency(),
                     optionalTargetBaseRate.get().getTargetCurrency(),
@@ -124,6 +128,7 @@ public class ExchangeService {
         }
         return Optional.empty();
     }
+
     private BigDecimal calculateConvertedAmount(BigDecimal rate, BigDecimal amount) {
         return rate.multiply(amount);
     }
