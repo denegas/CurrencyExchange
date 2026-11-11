@@ -26,7 +26,7 @@ public class AppInitializerListener implements ServletContextListener {
 
         ExchangeRateDao exchangeRateDao = new ExchangeRateDao(DatabaseInitializerListener.DB_URL);
         ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidatorImpl(currencyValidator);
-        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao,  exchangeRateValidator);
+        ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao,  exchangeRateValidator, currencyValidator);
         sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
 
         ExchangeValidator exchangeValidator = new ExchangeValidatorImpl(currencyValidator);

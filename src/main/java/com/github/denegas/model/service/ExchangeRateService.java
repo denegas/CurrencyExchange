@@ -1,5 +1,6 @@
 package com.github.denegas.model.service;
 
+import com.github.denegas.exception.ValidationException;
 import com.github.denegas.model.dao.ExchangeRateDao;
 import com.github.denegas.model.dto.ExchangeRateRequestDto;
 import com.github.denegas.model.dto.ExchangeRateResponseDto;
@@ -7,6 +8,7 @@ import com.github.denegas.model.entity.Currency;
 import com.github.denegas.model.entity.ExchangeRate;
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.model.mapper.exchangerate.ExchangeRateMapper;
+import com.github.denegas.model.validator.currency.CurrencyValidator;
 import com.github.denegas.model.validator.exchangerate.ExchangeRateValidator;
 
 import java.util.List;
@@ -17,10 +19,12 @@ public class ExchangeRateService {
 
     private final ExchangeRateDao dao;
     private final ExchangeRateValidator validator;
+    private final CurrencyValidator currencyValidator;
 
-    public ExchangeRateService(ExchangeRateDao dao, ExchangeRateValidator validator) {
+    public ExchangeRateService(ExchangeRateDao dao, ExchangeRateValidator validator, CurrencyValidator currencyValidator) {
         this.dao = dao;
         this.validator = validator;
+        this.currencyValidator = currencyValidator;
     }
 
     public List<ExchangeRateResponseDto> getAllRates() {
@@ -47,7 +51,9 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDto findByCodes(ExchangeRateRequestDto requestDto) {
-        validator.validate(requestDto);
+        if (!currencyValidator.isValidCurrencyCode(requestDto.baseCurrencyCode()) || !currencyValidator.isValidCurrencyCode(requestDto.targetCurrencyCode())) {
+            throw new ValidationException("invalid currency's codes in exchange rate");
+        }
 
         Optional<ExchangeRate> optionalRate = dao.findByCodes(requestDto.baseCurrencyCode(), requestDto.targetCurrencyCode());
         if (optionalRate.isEmpty()) {
@@ -64,7 +70,7 @@ public class ExchangeRateService {
                 new Currency(requestDto.targetCurrencyCode()),
                 requestDto.rate()
         );
-        //TODO: add check where user change rate to equal value
+
         if (!dao.update(updatingExchangeRate)) {
             throw new NotFoundException("not found updating exchange rate");
         }
