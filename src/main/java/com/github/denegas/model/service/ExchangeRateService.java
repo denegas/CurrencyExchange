@@ -15,22 +15,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class ExchangeRateService {
-    private static final ExchangeRateMapper MAPPER_INSTANCE = ExchangeRateMapper.INSTANCE;
-
+    private final ExchangeRateMapper mapper;
     private final ExchangeRateDao dao;
     private final ExchangeRateValidator validator;
     private final CurrencyValidator currencyValidator;
 
-    public ExchangeRateService(ExchangeRateDao dao, ExchangeRateValidator validator, CurrencyValidator currencyValidator) {
+    public ExchangeRateService(ExchangeRateDao dao, ExchangeRateValidator validator, ExchangeRateMapper mapper, CurrencyValidator currencyValidator) {
         this.dao = dao;
         this.validator = validator;
         this.currencyValidator = currencyValidator;
+        this.mapper = mapper;
     }
 
     public List<ExchangeRateResponseDto> getAllRates() {
         List<ExchangeRate> rates = dao.getAll();
 
-        return MAPPER_INSTANCE.toDtoList(rates);
+        return mapper.toDtoList(rates);
     }
 
     public ExchangeRateResponseDto insert(ExchangeRateRequestDto exchangeRateRequestDto) {
@@ -47,7 +47,7 @@ public class ExchangeRateService {
 
         ExchangeRate createdRate = dao.insert(creatingRate);
 
-        return MAPPER_INSTANCE.toDto(createdRate);
+        return mapper.toDto(createdRate);
     }
 
     public ExchangeRateResponseDto findByCodes(ExchangeRateRequestDto requestDto) {
@@ -59,7 +59,7 @@ public class ExchangeRateService {
         if (optionalRate.isEmpty()) {
             throw new NotFoundException("not found that exchange rate");
         }
-        return MAPPER_INSTANCE.toDto(optionalRate.get());
+        return mapper.toDto(optionalRate.get());
     }
 
     public ExchangeRateResponseDto update(ExchangeRateRequestDto requestDto) {
@@ -78,7 +78,7 @@ public class ExchangeRateService {
         if (updatedRate.isEmpty()) {
             throw new NotFoundException("not found updating rate");
         }
-        return MAPPER_INSTANCE.toDto(updatedRate.get());
+        return mapper.toDto(updatedRate.get());
 
     }
 }
