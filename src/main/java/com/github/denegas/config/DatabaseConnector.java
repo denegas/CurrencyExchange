@@ -15,7 +15,7 @@ public final class DatabaseConnector {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(url);
         } catch (ClassNotFoundException | SQLException e) {
-            throw new DbException(e);
+            throw new DbException("couldn't connect to database",e);
         }
     }
 }

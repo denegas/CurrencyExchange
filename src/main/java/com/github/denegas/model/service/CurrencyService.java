@@ -12,42 +12,42 @@ import java.util.List;
 import java.util.Optional;
 
 public class CurrencyService {
-    private final CurrencyMapper currencyMapper;
-    private final CurrencyDao currencyDao;
-    private final CurrencyValidator currencyValidator;
+    private final CurrencyMapper mapper;
+    private final CurrencyDao dao;
+    private final CurrencyValidator validator;
 
-    public CurrencyService(CurrencyDao dao, CurrencyValidator validator, CurrencyMapper currencyMapper) {
-        this.currencyDao = dao;
-        this.currencyMapper = currencyMapper;
-        this.currencyValidator = validator;
+    public CurrencyService(CurrencyDao dao, CurrencyValidator validator, CurrencyMapper mapper) {
+        this.dao = dao;
+        this.mapper = mapper;
+        this.validator = validator;
     }
 
     public CurrencyResponseDto insert(CurrencyRequestDto currencyRequestDto) {
-        Currency currency = currencyMapper.toEntity(currencyRequestDto);
-        currencyValidator.validate(currency);
-        Currency createdCurrency = currencyDao.insert(currency);
+        Currency currency = mapper.toEntity(currencyRequestDto);
+        validator.validate(currency);
+        Currency createdCurrency = dao.insert(currency);
 
-        return currencyMapper.toDto(createdCurrency);
+        return mapper.toDto(createdCurrency);
 
     }
 
     public CurrencyResponseDto findByCode(String code) {
-        if (!currencyValidator.isValidCurrencyCode(code)) {
+        if (!validator.isValidCurrencyCode(code)) {
             throw new ValidationException("invalid currency's code!");
         }
-        Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
+        Optional<Currency> optionalCurrency = dao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
             throw new NotFoundException("couldn't find currency with code: " + code);
         }
         Currency currency = optionalCurrency.get();
 
-        return currencyMapper.toDto(currency);
+        return mapper.toDto(currency);
 
     }
 
     public List<CurrencyResponseDto> getAll() {
-        List<Currency> currencies = currencyDao.getAll();
+        List<Currency> currencies = dao.getAll();
 
-        return currencyMapper.toDtoList(currencies);
+        return mapper.toDtoList(currencies);
     }
 }

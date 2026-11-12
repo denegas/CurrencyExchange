@@ -12,7 +12,7 @@ public class CurrencyValidatorImpl implements CurrencyValidator {
     private static final String CODE_REGEX = "^[A-Z]{3}$";
     private static final int MAX_SIGN_LENGTH = 6;
     private static final int MAX_FULL_NAME_LENGTH = 64;
-    private static final Pattern codePattern = Pattern.compile(CODE_REGEX);
+    private static final Pattern CODE_PATTERN = Pattern.compile(CODE_REGEX);
 
     @Override
     public void validate(Currency currency) {
@@ -44,7 +44,7 @@ public class CurrencyValidatorImpl implements CurrencyValidator {
         if (code == null) {
             return false;
         }
-        Matcher matcher = codePattern.matcher(code);
+        Matcher matcher = CODE_PATTERN.matcher(code);
         return code.length() == CURRENCY_CODE_LENGTH && code.equals(code.toUpperCase()) && matcher.matches();
     }
 }
