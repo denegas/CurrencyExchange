@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,8 +29,8 @@ public class ExceptionHandlingFilter implements Filter {
             JsonUtils.writeJson(resp, HttpServletResponse.SC_NOT_FOUND, Map.of("message", e.getMessage()));
         }  catch (AlreadyExistsException e) {
             JsonUtils.writeJson(resp, HttpServletResponse.SC_CONFLICT, Map.of("message", e.getMessage()));
-        } catch (DbException e) {
-            logger.log(Level.SEVERE, "db error: ", e);
+        } catch (DbException | NoSuchFileException e) {
+            logger.log(Level.SEVERE, e.toString());
             JsonUtils.writeJson(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Map.of("message", "we have some troubles now"));
         }
     }
