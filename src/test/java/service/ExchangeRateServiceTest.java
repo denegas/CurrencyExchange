@@ -1,3 +1,5 @@
+package service;
+
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.model.dao.ExchangeRateDao;
 import com.github.denegas.model.dto.ExchangeRateRequestDto;

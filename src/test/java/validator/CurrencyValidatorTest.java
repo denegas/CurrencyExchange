@@ -1,3 +1,5 @@
+package validator;
+
 import com.github.denegas.model.entity.Currency;
 import com.github.denegas.exception.ValidationException;
 import com.github.denegas.model.validator.currency.CurrencyValidator;

@@ -1,3 +1,4 @@
+package service;
 
 import com.github.denegas.model.dao.CurrencyDao;
 import com.github.denegas.exception.NotFoundException;
