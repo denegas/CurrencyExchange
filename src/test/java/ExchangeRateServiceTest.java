@@ -1,7 +1,6 @@
 import com.github.denegas.exception.NotFoundException;
 import com.github.denegas.model.dao.ExchangeRateDao;
 import com.github.denegas.model.dto.ExchangeRateRequestDto;
-import com.github.denegas.model.entity.ExchangeRate;
 import com.github.denegas.model.mapper.exchangerate.ExchangeRateMapper;
 import com.github.denegas.model.service.ExchangeRateService;
 import com.github.denegas.model.validator.currency.CurrencyValidator;
@@ -31,8 +30,8 @@ public class ExchangeRateServiceTest {
     void setUp() {
         this.dao = Mockito.mock(ExchangeRateDao.class);
         this.mapper = ExchangeRateMapper.INSTANCE;
-        this.validator = new ExchangeRateValidatorImpl(currencyValidator);
         this.currencyValidator = new CurrencyValidatorImpl();
+        this.validator = new ExchangeRateValidatorImpl(currencyValidator);
         this.service = new ExchangeRateService(dao, validator, mapper, currencyValidator);
     }
 
