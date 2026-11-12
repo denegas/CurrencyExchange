@@ -60,7 +60,7 @@ public final class RequestUtils {
     }
 
     public static boolean isPathEmpty(String path) {
-        return path == null || normalizePath(path).isBlank();
+        return path == null || path.replace("/","").isBlank();
     }
 
     public static String normalizePath(String path) {
