@@ -13,7 +13,7 @@ COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 ENV CATALINA_OPTS="-Duser.home=/data"
 RUN mkdir -p /data
-VOLUME /data
+#VOLUME /data
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
