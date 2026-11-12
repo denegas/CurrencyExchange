@@ -28,7 +28,7 @@ public class CurrencyServiceTest {
     }
 
     @Test
-    void findByCodeThrowsNotFoundException() {
+    void findByCode_ThrowsNotFound_WhenDaoReturnsEmpty() {
         when(dao.findByCode(any())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(NotFoundException.class, () -> service.findByCode("XXX"));
