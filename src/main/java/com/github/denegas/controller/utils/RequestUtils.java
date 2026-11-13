@@ -30,14 +30,14 @@ public final class RequestUtils {
         if (isPathEmpty(path)) {
             return "";
         }
-        return normalizePath(path).substring(0, 3).toUpperCase();
+        return normalizePath(path).substring(0, 3);
     }
 
     public static String getTargetCurrencyCodeFromPath(String path) {
         if (isPathEmpty(path)) {
             return "";
         }
-        return normalizePath(path).substring(3).toUpperCase();
+        return normalizePath(path).substring(3);
     }
 
     public static Optional<String> getPatchParam(BufferedReader requestReader, String name) throws IOException {
